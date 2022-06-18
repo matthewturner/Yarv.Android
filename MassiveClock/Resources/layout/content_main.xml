@@ -24,11 +24,6 @@
         android:text="@string/disconnect"
         android:id="@+id/buttonDisconnect"
         android:visibility="gone" />
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/rawStatus"
-        android:text="@string/raw_status" />
     <TableLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -106,6 +101,17 @@
                 android:layout_weight="1" />
         </TableRow>
     </TableLayout>
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/synchronize"
+        android:id="@+id/buttonSynchronize"
+        android:visibility="gone" />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/rawStatus"
+        android:text="@string/raw_status" />
     <ListView
         android:id="@+id/listViewAvailableDevices"
         android:layout_width="match_parent"

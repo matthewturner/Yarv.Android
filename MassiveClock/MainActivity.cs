@@ -21,7 +21,7 @@ using Android.Graphics;
 
 namespace MassiveClock
 {
-    [Activity(Label = "@string/app_name", Theme = "@style/AppTheme.NoActionBar", 
+    [Activity(Label = "@string/app_name", Theme = "@style/AppTheme.NoActionBar",
         MainLauncher = true)]
     public class MainActivity : AppCompatActivity
     {
@@ -42,6 +42,7 @@ namespace MassiveClock
         private aw.ImageView _imageViewTimeDifference;
         private aw.ImageView _imageViewDateDifference;
         private bool _debugOptionsEnabled;
+        private aw.Button _buttonSynchronize;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -63,6 +64,10 @@ namespace MassiveClock
 
             _buttonSimulate = FindViewById<aw.Button>(Resource.Id.buttonSimulate);
             _buttonSimulate.Click += ButtonSimulate_Click;
+
+            _buttonSynchronize = FindViewById<aw.Button>(Resource.Id.buttonSynchronize);
+            _buttonSynchronize.Click += ButtonSynchronize_Click;
+
 
             _textViewRawStatus = FindViewById<aw.TextView>(Resource.Id.rawStatus);
 
@@ -114,6 +119,16 @@ namespace MassiveClock
             _socket.Close();
             _buttonConnect.Visibility = ViewStates.Visible;
             _buttonDisconnect.Visibility = ViewStates.Gone;
+            _buttonSynchronize.Visibility = ViewStates.Gone;
+        }
+
+        private void ButtonSynchronize_Click(object sender, EventArgs e)
+        {
+            var unixTime = ConvertToUnixTime(DateTime.Now);
+            var buffer = Encoding.UTF8.GetBytes($">set:{unixTime}!");
+            _socket.OutputStream.Write(buffer, 0, buffer.Length);
+
+            CheckStatus();
         }
 
         private void ButtonSimulate_Click(object sender, EventArgs e)
@@ -197,6 +212,14 @@ namespace MassiveClock
             _socket = _device.CreateRfcommSocketToServiceRecord(UUID.FromString("00001101-0000-1000-8000-00805f9b34fb"));
             _socket.Connect();
 
+            _buttonConnect.Visibility = ViewStates.Gone;
+            _buttonDisconnect.Visibility = ViewStates.Visible;
+
+            CheckStatus();
+        }
+
+        private void CheckStatus()
+        {
             var buffer = Encoding.UTF8.GetBytes(">status!");
             _socket.OutputStream.Write(buffer, 0, buffer.Length);
 
@@ -208,9 +231,6 @@ namespace MassiveClock
             var status = Encoding.UTF8.GetString(statusBuffer, 0, length);
 
             ProcessStatus(status);
-
-            _buttonConnect.Visibility = ViewStates.Gone;
-            _buttonDisconnect.Visibility = ViewStates.Visible;
         }
 
         public override bool OnCreateOptionsMenu(IMenu menu)
@@ -228,12 +248,12 @@ namespace MassiveClock
 
         public override bool OnOptionsItemSelected(IMenuItem item)
         {
-            switch(item.ItemId)
+            switch (item.ItemId)
             {
                 case Resource.Id.action_settings:
                     return true;
                 case Resource.Id.action_debug:
-                    InitializeDebugOptions(!_debugOptionsEnabled);                    
+                    InitializeDebugOptions(!_debugOptionsEnabled);
                     return true;
             }
 

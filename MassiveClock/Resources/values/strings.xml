@@ -6,6 +6,7 @@
     <string name="disconnect">Disconnect</string>
     <string name="raw_status">Raw status</string>
     <string name="simulate">Simulate</string>
+    <string name="synchronize">Synchronize</string>
     <string name="unixtime_difference">Indicates whether there is a difference between the unix times</string>
     <string name="time_difference">Indicates whether there is a difference between the times</string>
     <string name="date_difference">Indicates whether there is a difference between the dates</string>
