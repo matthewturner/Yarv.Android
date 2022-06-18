@@ -227,14 +227,34 @@ namespace MassiveClock
             var buffer = Encoding.UTF8.GetBytes(">status!");
             _socket.OutputStream.Write(buffer, 0, buffer.Length);
 
-            Thread.Sleep(300);
-
+            Thread.Sleep(200);
             var statusBuffer = new byte[1024];
-            var length = _socket.InputStream.Read(statusBuffer, 0, statusBuffer.Length);
+            var attempts = 0;
+            var length = 0;
+            while (attempts < 10)
+            {
+                Thread.Sleep(100);
+                try
+                {
+                    length = _socket.InputStream.Read(statusBuffer, length, statusBuffer.Length);
+                }
+                catch (Exception)
+                {
+                    break;
+                }
+                var s = Encoding.UTF8.GetString(statusBuffer, 0, length);
+                if (s.TrimEnd().EndsWith("}"))
+                {
+                    attempts = 10;
+                }
+                attempts++;
+            }
 
-            var status = Encoding.UTF8.GetString(statusBuffer, 0, length);
-
-            ProcessStatus(status);
+            var status = Encoding.UTF8.GetString(statusBuffer, 0, length).Trim();
+            if (status.StartsWith("{") && status.EndsWith("}"))
+            {
+                ProcessStatus(status);
+            }
         }
 
         public override bool OnCreateOptionsMenu(IMenu menu)
