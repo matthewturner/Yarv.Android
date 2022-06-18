@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using Java.Util;
 using System.Text;
 using System.Linq;
+using System.Threading;
 
 namespace MassiveClock
 {
@@ -89,12 +90,14 @@ namespace MassiveClock
             var buffer = Encoding.UTF8.GetBytes(">status!");
             _socket.OutputStream.Write(buffer, 0, buffer.Length);
 
+            Thread.Sleep(500);
+
             var statusBuffer = new byte[1024];
-            _socket.InputStream.Read(statusBuffer, 0, statusBuffer.Length);
+            var length = _socket.InputStream.Read(statusBuffer, 0, statusBuffer.Length);
 
-            var status = Encoding.UTF8.GetString(statusBuffer);
+            var status = Encoding.UTF8.GetString(statusBuffer, 0, length);
 
-            _textViewRawStatus.SetText(status, Android.Widget.TextView.BufferType.Normal);
+            _textViewRawStatus.Text = status;
 
             _buttonConnect.Visibility = ViewStates.Gone;
             _buttonDisconnect.Visibility = ViewStates.Visible;
