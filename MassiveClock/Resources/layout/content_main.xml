@@ -10,20 +10,23 @@
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:text="@string/connect"
         android:id="@+id/buttonConnect" />
-    <TextView
+    <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Connected"
+        android:text="@string/disconnect"
+        android:id="@+id/buttonDisconnect"
         android:visibility="gone" />
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/rawStatus"
-        android:text="Raw status" />
+        android:text="@string/raw_status" />
     <ListView
-        android:id="@+id/simpleListView"
+        android:id="@+id/listViewAvailableDevices"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:visibility="gone">
     </ListView>
 </RelativeLayout>

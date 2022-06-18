@@ -20,7 +20,12 @@ namespace MassiveClock
     [Activity(Label = "@string/app_name", Theme = "@style/AppTheme.NoActionBar", MainLauncher = true)]
     public class MainActivity : AppCompatActivity
     {
-        private Android.Widget.TextView _textviewRawStatus;
+        private Android.Widget.Button _buttonDisconnect;
+        private Android.Widget.TextView _textViewRawStatus;
+        private Android.Widget.ListView _listViewAvailableDevices;
+        private Android.Widget.Button _buttonConnect;
+        private BluetoothSocket _socket;
+        private BluetoothDevice _device;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -34,40 +39,65 @@ namespace MassiveClock
             FloatingActionButton fab = FindViewById<FloatingActionButton>(Resource.Id.fab);
             fab.Click += FabOnClick;
 
-            var buttonConnect = FindViewById<Android.Widget.Button>(Resource.Id.buttonConnect);
-            buttonConnect.Click += ButtonConnect_Click;
+            _buttonConnect = FindViewById<Android.Widget.Button>(Resource.Id.buttonConnect);
+            _buttonConnect.Click += ButtonConnect_Click;
 
-            _textviewRawStatus = FindViewById<Android.Widget.TextView>(Resource.Id.rawStatus);
+            _buttonDisconnect = FindViewById<Android.Widget.Button>(Resource.Id.buttonDisconnect);
+            _buttonDisconnect.Click += ButtonDisconnect_Click;
+
+            _textViewRawStatus = FindViewById<Android.Widget.TextView>(Resource.Id.rawStatus);
+
+            _listViewAvailableDevices = FindViewById<Android.Widget.ListView>(Resource.Id.listViewAvailableDevices);
+
+            InitializeDevice();
+        }
+
+        private void InitializeDevice()
+        {
+            var adapter = BluetoothAdapter.DefaultAdapter;
+            _device = (from bd in adapter.BondedDevices
+                          where bd.Name == "MassiveClock"
+                          select bd).FirstOrDefault();
+
+            if (_device == null)
+            {
+                _textViewRawStatus.Text = "Named device not found";
+                _buttonConnect.Visibility = ViewStates.Gone;
+                _listViewAvailableDevices.Visibility = ViewStates.Visible;
+                var list = adapter.BondedDevices.Select(x => x.Name).ToList();
+                _listViewAvailableDevices.Adapter = new Android.Widget.ArrayAdapter<string>(this, Android.Resource.Layout.SimpleListItem1, list);
+            }
+            else
+            {
+                _buttonConnect.Visibility = ViewStates.Visible;
+                _listViewAvailableDevices.Visibility = ViewStates.Gone;
+            }
+        }
+
+        private void ButtonDisconnect_Click(object sender, EventArgs e)
+        {
+            _socket.Close();
+            _buttonConnect.Visibility = ViewStates.Visible;
+            _buttonDisconnect.Visibility = ViewStates.Gone;
         }
 
         private void ButtonConnect_Click(object sender, EventArgs e)
         {
-            var adapter = BluetoothAdapter.DefaultAdapter;
-            BluetoothDevice device = (from bd in adapter.BondedDevices
-                                      where bd.Name == "MassiveClock"
-                                      select bd).FirstOrDefault();
-
-            if (device == null)
-            {
-                //throw new Exception("Named device not found");
-                var view = (View)sender;
-                Snackbar.Make(view, "Named device not found", Snackbar.LengthLong)
-                    .SetAction("Action", (View.IOnClickListener)null).Show();
-            }
-
-            var socket = device.CreateRfcommSocketToServiceRecord(UUID.FromString("00001101-0000-1000-8000-00805f9b34fb"));
-            socket.Connect();
+            _socket = _device.CreateRfcommSocketToServiceRecord(UUID.FromString("00001101-0000-1000-8000-00805f9b34fb"));
+            _socket.Connect();
 
             var buffer = Encoding.UTF8.GetBytes(">status!");
-            socket.OutputStream.Write(buffer, 0, buffer.Length);
+            _socket.OutputStream.Write(buffer, 0, buffer.Length);
 
             var statusBuffer = new byte[1024];
-            socket.InputStream.Read(statusBuffer, 0, statusBuffer.Length);
+            _socket.InputStream.Read(statusBuffer, 0, statusBuffer.Length);
 
             var status = Encoding.UTF8.GetString(statusBuffer);
 
-            _textviewRawStatus.SetText(status, Android.Widget.TextView.BufferType.Normal);
-            socket.Close();
+            _textViewRawStatus.SetText(status, Android.Widget.TextView.BufferType.Normal);
+
+            _buttonConnect.Visibility = ViewStates.Gone;
+            _buttonDisconnect.Visibility = ViewStates.Visible;
         }
 
         public override bool OnCreateOptionsMenu(IMenu menu)
