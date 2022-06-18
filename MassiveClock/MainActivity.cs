@@ -23,10 +23,13 @@ namespace MassiveClock
     {
         private Android.Widget.Button _buttonDisconnect;
         private Android.Widget.TextView _textViewRawStatus;
+        private Android.Widget.TextView _textViewPhoneTime;
+        private Android.Widget.TextView _textViewClockTime;
         private Android.Widget.ListView _listViewAvailableDevices;
         private Android.Widget.Button _buttonConnect;
         private BluetoothSocket _socket;
         private BluetoothDevice _device;
+        private Android.Widget.Button _buttonSimulate;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -46,7 +49,13 @@ namespace MassiveClock
             _buttonDisconnect = FindViewById<Android.Widget.Button>(Resource.Id.buttonDisconnect);
             _buttonDisconnect.Click += ButtonDisconnect_Click;
 
+            _buttonSimulate = FindViewById<Android.Widget.Button>(Resource.Id.buttonSimulate);
+            _buttonSimulate.Click += ButtonSimulate_Click;
+
             _textViewRawStatus = FindViewById<Android.Widget.TextView>(Resource.Id.rawStatus);
+
+            _textViewPhoneTime = FindViewById<Android.Widget.TextView>(Resource.Id.textViewPhoneTime);
+            _textViewClockTime = FindViewById<Android.Widget.TextView>(Resource.Id.textViewClockTime);
 
             _listViewAvailableDevices = FindViewById<Android.Widget.ListView>(Resource.Id.listViewAvailableDevices);
 
@@ -63,15 +72,19 @@ namespace MassiveClock
             if (_device == null)
             {
                 _textViewRawStatus.Text = "Named device not found";
+                _buttonSimulate.Visibility = ViewStates.Visible;
                 _buttonConnect.Visibility = ViewStates.Gone;
+                _buttonDisconnect.Visibility = ViewStates.Gone;
                 _listViewAvailableDevices.Visibility = ViewStates.Visible;
                 var list = adapter.BondedDevices.Select(x => x.Name).ToList();
                 _listViewAvailableDevices.Adapter = new Android.Widget.ArrayAdapter<string>(this, Android.Resource.Layout.SimpleListItem1, list);
             }
             else
             {
+                _buttonSimulate.Visibility = ViewStates.Gone;
                 _buttonConnect.Visibility = ViewStates.Visible;
                 _listViewAvailableDevices.Visibility = ViewStates.Gone;
+                _buttonDisconnect.Visibility = ViewStates.Gone;
             }
         }
 
@@ -82,6 +95,31 @@ namespace MassiveClock
             _buttonDisconnect.Visibility = ViewStates.Gone;
         }
 
+        private void ButtonSimulate_Click(object sender, EventArgs e)
+        {
+            long unixDateTime = ConvertToUnixTime(DateTime.Now);
+            var status = @$"
+{{
+    ""time"": {unixDateTime}
+}}
+";
+            ProcessStatus(status);
+        }
+
+        private static long ConvertToUnixTime(DateTime dateTime)
+        {
+            var dateTimeOffset = new DateTimeOffset(dateTime);
+            var unixDateTime = dateTimeOffset.ToUnixTimeSeconds();
+            return unixDateTime;
+        }
+
+        private void ProcessStatus(string status)
+        {
+            _textViewRawStatus.Text = status;
+
+            _textViewPhoneTime.Text = ConvertToUnixTime(DateTime.Now).ToString();
+        }
+
         private void ButtonConnect_Click(object sender, EventArgs e)
         {
             _socket = _device.CreateRfcommSocketToServiceRecord(UUID.FromString("00001101-0000-1000-8000-00805f9b34fb"));
@@ -90,14 +128,14 @@ namespace MassiveClock
             var buffer = Encoding.UTF8.GetBytes(">status!");
             _socket.OutputStream.Write(buffer, 0, buffer.Length);
 
-            Thread.Sleep(500);
+            Thread.Sleep(300);
 
             var statusBuffer = new byte[1024];
             var length = _socket.InputStream.Read(statusBuffer, 0, statusBuffer.Length);
 
             var status = Encoding.UTF8.GetString(statusBuffer, 0, length);
 
-            _textViewRawStatus.Text = status;
+            ProcessStatus(status);
 
             _buttonConnect.Visibility = ViewStates.Gone;
             _buttonDisconnect.Visibility = ViewStates.Visible;
