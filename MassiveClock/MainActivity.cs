@@ -25,24 +25,25 @@ namespace MassiveClock
         MainLauncher = true)]
     public class MainActivity : AppCompatActivity
     {
-        private Android.Widget.Button _buttonDisconnect;
-        private Android.Widget.TextView _textViewRawStatus;
-        private Android.Widget.TextView _textViewPhoneUnixTime;
-        private Android.Widget.TextView _textViewPhoneTime;
-        private Android.Widget.TextView _textViewClockTime;
-        private Android.Widget.TextView _textViewClockUnixTime;
-        private Android.Widget.ListView _listViewAvailableDevices;
-        private Android.Widget.Button _buttonConnect;
+        private aw.Button _buttonDisconnect;
+        private aw.TextView _textViewRawStatus;
+        private aw.TextView _textViewPhoneUnixTime;
+        private aw.TextView _textViewPhoneTime;
+        private aw.TextView _textViewClockTime;
+        private aw.TextView _textViewClockUnixTime;
+        private aw.ListView _listViewAvailableDevices;
+        private aw.Button _buttonConnect;
         private BluetoothSocket _socket;
         private BluetoothDevice _device;
-        private Android.Widget.Button _buttonSimulate;
-        private Android.Widget.TextView _textViewPhoneDate;
-        private Android.Widget.TextView _textViewClockDate;
+        private aw.Button _buttonSimulate;
+        private aw.TextView _textViewPhoneDate;
+        private aw.TextView _textViewClockDate;
         private aw.ImageView _imageViewUnixTimeDifference;
         private aw.ImageView _imageViewTimeDifference;
         private aw.ImageView _imageViewDateDifference;
         private bool _debugOptionsEnabled;
         private aw.Button _buttonSynchronize;
+        private FloatingActionButton _fabCheckStatus;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -53,21 +54,24 @@ namespace MassiveClock
             var toolbar = FindViewById<Toolbar>(Resource.Id.toolbar);
             SetSupportActionBar(toolbar);
 
-            FloatingActionButton fab = FindViewById<FloatingActionButton>(Resource.Id.fab);
-            fab.Click += FabOnClick;
+            _fabCheckStatus = FindViewById<FloatingActionButton>(Resource.Id.fabCheckStatus);
+            _fabCheckStatus.Visibility = ViewStates.Gone;
+            _fabCheckStatus.Click += FabCheckStatus_OnClick;
 
             _buttonConnect = FindViewById<aw.Button>(Resource.Id.buttonConnect);
             _buttonConnect.Click += ButtonConnect_Click;
 
             _buttonDisconnect = FindViewById<aw.Button>(Resource.Id.buttonDisconnect);
+            _buttonDisconnect.Visibility = ViewStates.Gone;
             _buttonDisconnect.Click += ButtonDisconnect_Click;
 
             _buttonSimulate = FindViewById<aw.Button>(Resource.Id.buttonSimulate);
+            _buttonSimulate.Visibility = ViewStates.Gone;
             _buttonSimulate.Click += ButtonSimulate_Click;
 
             _buttonSynchronize = FindViewById<aw.Button>(Resource.Id.buttonSynchronize);
+            _buttonSynchronize.Visibility = ViewStates.Gone;
             _buttonSynchronize.Click += ButtonSynchronize_Click;
-
 
             _textViewRawStatus = FindViewById<aw.TextView>(Resource.Id.rawStatus);
 
@@ -100,17 +104,14 @@ namespace MassiveClock
                 _textViewRawStatus.Text = "Named device not found";
                 InitializeDebugOptions(true);
                 _buttonConnect.Visibility = ViewStates.Gone;
-                _buttonDisconnect.Visibility = ViewStates.Gone;
                 _listViewAvailableDevices.Visibility = ViewStates.Visible;
                 var list = adapter.BondedDevices.Select(x => x.Name).ToList();
-                _listViewAvailableDevices.Adapter = new Android.Widget.ArrayAdapter<string>(this, Android.Resource.Layout.SimpleListItem1, list);
+                _listViewAvailableDevices.Adapter = new aw.ArrayAdapter<string>(this, Android.Resource.Layout.SimpleListItem1, list);
             }
             else
             {
-                _buttonSimulate.Visibility = ViewStates.Gone;
                 _buttonConnect.Visibility = ViewStates.Visible;
                 _listViewAvailableDevices.Visibility = ViewStates.Gone;
-                _buttonDisconnect.Visibility = ViewStates.Gone;
             }
         }
 
@@ -120,6 +121,7 @@ namespace MassiveClock
             _buttonConnect.Visibility = ViewStates.Visible;
             _buttonDisconnect.Visibility = ViewStates.Gone;
             _buttonSynchronize.Visibility = ViewStates.Gone;
+            _fabCheckStatus.Visibility = ViewStates.Gone;
         }
 
         private void ButtonSynchronize_Click(object sender, EventArgs e)
@@ -214,6 +216,8 @@ namespace MassiveClock
 
             _buttonConnect.Visibility = ViewStates.Gone;
             _buttonDisconnect.Visibility = ViewStates.Visible;
+            _buttonSynchronize.Visibility = ViewStates.Visible;
+            _fabCheckStatus.Visibility = ViewStates.Visible;
 
             CheckStatus();
         }
@@ -275,11 +279,9 @@ namespace MassiveClock
             }
         }
 
-        private void FabOnClick(object sender, EventArgs eventArgs)
+        private void FabCheckStatus_OnClick(object sender, EventArgs eventArgs)
         {
-            var view = (View)sender;
-            Snackbar.Make(view, "Replace with your own action", Snackbar.LengthLong)
-                .SetAction("Action", (View.IOnClickListener)null).Show();
+            CheckStatus();
         }
 
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Android.Content.PM.Permission[] grantResults)

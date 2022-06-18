@@ -28,7 +28,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/layoutComparison"
-        android:padding="5dp">
+        android:padding="5dp"
+        android:layout_marginVertical="5dp">
         <TableRow
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
@@ -37,12 +38,14 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/textViewPhoneUnixTime"
                 android:layout_column="0"
-                android:layout_weight="1" />
+                android:layout_weight="2" 
+                android:layout_margin="5dp"
+                android:textSize="18sp" />
             <ImageView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:id="@+id/imageViewUnixTimeDifference"
-                android:src="@drawable/abc_btn_check_material_anim"
+                android:src="@drawable/baseline_done_outline_24"
                 android:contentDescription="@string/unixtime_difference"
                 android:layout_column="1"
                 android:layout_weight="1" />
@@ -51,7 +54,9 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/textViewClockUnixTime"
                 android:layout_column="2"
-                android:layout_weight="1" />
+                android:layout_weight="2"
+                android:layout_margin="5dp"
+                android:textSize="18sp" />
         </TableRow>
         <TableRow
             android:layout_width="match_parent"
@@ -61,12 +66,14 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/textViewPhoneDate"
                 android:layout_column="0"
-                android:layout_weight="1" />
+                android:layout_weight="2"
+                android:layout_margin="5dp"
+                android:textSize="18sp" />
             <ImageView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:id="@+id/imageViewDateDifference"
-                android:src="@drawable/abc_btn_check_material_anim"
+                android:src="@drawable/baseline_done_outline_24"
                 android:contentDescription="@string/date_difference"
                 android:layout_column="1"
                 android:layout_weight="1" />
@@ -75,7 +82,9 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/textViewClockDate"
                 android:layout_column="2"
-                android:layout_weight="1" />
+                android:layout_weight="2"
+                android:layout_margin="5dp"
+                android:textSize="18sp" />
         </TableRow>
         <TableRow
             android:layout_width="match_parent"
@@ -85,12 +94,14 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/textViewPhoneTime"
                 android:layout_column="0"
-                android:layout_weight="1" />
+                android:layout_weight="2"
+                android:layout_margin="5dp"
+                android:textSize="18sp" />
             <ImageView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:id="@+id/imageViewTimeDifference"
-                android:src="@drawable/abc_btn_check_material_anim"
+                android:src="@drawable/baseline_done_outline_24"
                 android:contentDescription="@string/time_difference"
                 android:layout_column="1"
                 android:layout_weight="1" />
@@ -98,20 +109,23 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/textViewClockTime"
-                android:layout_weight="1" />
+                android:layout_column="2"
+                android:layout_weight="2"
+                android:layout_margin="5dp"
+                android:textSize="18sp" />
         </TableRow>
     </TableLayout>
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/synchronize"
-        android:id="@+id/buttonSynchronize"
-        android:visibility="gone" />
+        android:id="@+id/buttonSynchronize" />
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/rawStatus"
-        android:text="@string/raw_status" />
+        android:text="@string/raw_status" 
+        android:layout_margin="5dp" />
     <ListView
         android:id="@+id/listViewAvailableDevices"
         android:layout_width="match_parent"
