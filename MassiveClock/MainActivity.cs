@@ -16,21 +16,32 @@ using System.Text;
 using System.Linq;
 using System.Threading;
 using Newtonsoft.Json;
+using aw = Android.Widget;
+using Android.Graphics;
 
 namespace MassiveClock
 {
-    [Activity(Label = "@string/app_name", Theme = "@style/AppTheme.NoActionBar", MainLauncher = true)]
+    [Activity(Label = "@string/app_name", Theme = "@style/AppTheme.NoActionBar", 
+        MainLauncher = true)]
     public class MainActivity : AppCompatActivity
     {
         private Android.Widget.Button _buttonDisconnect;
         private Android.Widget.TextView _textViewRawStatus;
+        private Android.Widget.TextView _textViewPhoneUnixTime;
         private Android.Widget.TextView _textViewPhoneTime;
         private Android.Widget.TextView _textViewClockTime;
+        private Android.Widget.TextView _textViewClockUnixTime;
         private Android.Widget.ListView _listViewAvailableDevices;
         private Android.Widget.Button _buttonConnect;
         private BluetoothSocket _socket;
         private BluetoothDevice _device;
         private Android.Widget.Button _buttonSimulate;
+        private Android.Widget.TextView _textViewPhoneDate;
+        private Android.Widget.TextView _textViewClockDate;
+        private aw.ImageView _imageViewUnixTimeDifference;
+        private aw.ImageView _imageViewTimeDifference;
+        private aw.ImageView _imageViewDateDifference;
+        private bool _debugOptionsEnabled;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -44,22 +55,31 @@ namespace MassiveClock
             FloatingActionButton fab = FindViewById<FloatingActionButton>(Resource.Id.fab);
             fab.Click += FabOnClick;
 
-            _buttonConnect = FindViewById<Android.Widget.Button>(Resource.Id.buttonConnect);
+            _buttonConnect = FindViewById<aw.Button>(Resource.Id.buttonConnect);
             _buttonConnect.Click += ButtonConnect_Click;
 
-            _buttonDisconnect = FindViewById<Android.Widget.Button>(Resource.Id.buttonDisconnect);
+            _buttonDisconnect = FindViewById<aw.Button>(Resource.Id.buttonDisconnect);
             _buttonDisconnect.Click += ButtonDisconnect_Click;
 
-            _buttonSimulate = FindViewById<Android.Widget.Button>(Resource.Id.buttonSimulate);
+            _buttonSimulate = FindViewById<aw.Button>(Resource.Id.buttonSimulate);
             _buttonSimulate.Click += ButtonSimulate_Click;
 
-            _textViewRawStatus = FindViewById<Android.Widget.TextView>(Resource.Id.rawStatus);
+            _textViewRawStatus = FindViewById<aw.TextView>(Resource.Id.rawStatus);
 
-            _textViewPhoneTime = FindViewById<Android.Widget.TextView>(Resource.Id.textViewPhoneTime);
-            _textViewClockTime = FindViewById<Android.Widget.TextView>(Resource.Id.textViewClockTime);
+            _textViewPhoneUnixTime = FindViewById<aw.TextView>(Resource.Id.textViewPhoneUnixTime);
+            _textViewClockUnixTime = FindViewById<aw.TextView>(Resource.Id.textViewClockUnixTime);
+            _textViewPhoneTime = FindViewById<aw.TextView>(Resource.Id.textViewPhoneTime);
+            _textViewClockTime = FindViewById<aw.TextView>(Resource.Id.textViewClockTime);
+            _textViewPhoneDate = FindViewById<aw.TextView>(Resource.Id.textViewPhoneDate);
+            _textViewClockDate = FindViewById<aw.TextView>(Resource.Id.textViewClockDate);
 
-            _listViewAvailableDevices = FindViewById<Android.Widget.ListView>(Resource.Id.listViewAvailableDevices);
+            _imageViewUnixTimeDifference = FindViewById<aw.ImageView>(Resource.Id.imageViewUnixTimeDifference);
+            _imageViewTimeDifference = FindViewById<aw.ImageView>(Resource.Id.imageViewTimeDifference);
+            _imageViewDateDifference = FindViewById<aw.ImageView>(Resource.Id.imageViewDateDifference);
 
+            _listViewAvailableDevices = FindViewById<aw.ListView>(Resource.Id.listViewAvailableDevices);
+
+            InitializeDebugOptions(false);
             InitializeDevice();
         }
 
@@ -73,7 +93,7 @@ namespace MassiveClock
             if (_device == null)
             {
                 _textViewRawStatus.Text = "Named device not found";
-                _buttonSimulate.Visibility = ViewStates.Visible;
+                InitializeDebugOptions(true);
                 _buttonConnect.Visibility = ViewStates.Gone;
                 _buttonDisconnect.Visibility = ViewStates.Gone;
                 _listViewAvailableDevices.Visibility = ViewStates.Visible;
@@ -110,8 +130,13 @@ namespace MassiveClock
         private static long ConvertToUnixTime(DateTime dateTime)
         {
             var dateTimeOffset = new DateTimeOffset(dateTime);
-            var unixDateTime = dateTimeOffset.ToUnixTimeSeconds();
-            return unixDateTime;
+            return dateTimeOffset.ToUnixTimeSeconds();
+        }
+
+        private static DateTime ConvertFromUnixTime(long unixTime)
+        {
+            var dateTimeOffset = DateTimeOffset.FromUnixTimeSeconds(unixTime);
+            return dateTimeOffset.LocalDateTime;
         }
 
         private void ProcessStatus(string rawStatus)
@@ -120,14 +145,37 @@ namespace MassiveClock
 
             var status = JsonConvert.DeserializeObject<Status>(rawStatus);
             var clockUnixTime = status.Time;
-            _textViewClockTime.Text = clockUnixTime.ToString();
+            _textViewClockUnixTime.Text = clockUnixTime.ToString();
 
-            var phoneUnixTime = ConvertToUnixTime(DateTime.Now);
-            _textViewPhoneTime.Text = phoneUnixTime.ToString();
+            var clockDateTime = ConvertFromUnixTime(clockUnixTime);
+            _textViewClockDate.Text = clockDateTime.ToString("dd/MM/yyyy");
+            _textViewClockTime.Text = clockDateTime.ToString("HH:mm:ss");
+
+            var phoneDateTime = DateTime.Now;
+            var phoneUnixTime = ConvertToUnixTime(phoneDateTime);
+            _textViewPhoneUnixTime.Text = phoneUnixTime.ToString();
+
+            _textViewPhoneDate.Text = phoneDateTime.ToString("dd/MM/yyyy");
+            _textViewPhoneTime.Text = phoneDateTime.ToString("HH:mm:ss");
 
             if (ApproximatelyEqual(phoneUnixTime, clockUnixTime))
             {
+                _imageViewUnixTimeDifference.SetBackgroundColor(Color.Green);
+                _imageViewTimeDifference.SetBackgroundColor(Color.Green);
+            }
+            else
+            {
+                _imageViewUnixTimeDifference.SetBackgroundColor(Color.Red);
+                _imageViewTimeDifference.SetBackgroundColor(Color.Red);
+            }
 
+            if (_textViewClockDate.Text == _textViewPhoneDate.Text)
+            {
+                _imageViewDateDifference.SetBackgroundColor(Color.Green);
+            }
+            else
+            {
+                _imageViewDateDifference.SetBackgroundColor(Color.Red);
             }
         }
 
@@ -171,15 +219,40 @@ namespace MassiveClock
             return true;
         }
 
+        public override bool OnPrepareOptionsMenu(IMenu menu)
+        {
+            var debugMenuItem = menu.FindItem(Resource.Id.action_debug);
+            debugMenuItem.SetChecked(_debugOptionsEnabled);
+            return base.OnPrepareOptionsMenu(menu);
+        }
+
         public override bool OnOptionsItemSelected(IMenuItem item)
         {
-            int id = item.ItemId;
-            if (id == Resource.Id.action_settings)
+            switch(item.ItemId)
             {
-                return true;
+                case Resource.Id.action_settings:
+                    return true;
+                case Resource.Id.action_debug:
+                    InitializeDebugOptions(!_debugOptionsEnabled);                    
+                    return true;
             }
 
             return base.OnOptionsItemSelected(item);
+        }
+
+        private void InitializeDebugOptions(bool debugOptionsEnabled)
+        {
+            _debugOptionsEnabled = debugOptionsEnabled;
+            if (_debugOptionsEnabled)
+            {
+                _textViewRawStatus.Visibility = ViewStates.Visible;
+                _buttonSimulate.Visibility = ViewStates.Visible;
+            }
+            else
+            {
+                _textViewRawStatus.Visibility = ViewStates.Gone;
+                _buttonSimulate.Visibility = ViewStates.Gone;
+            }
         }
 
         private void FabOnClick(object sender, EventArgs eventArgs)

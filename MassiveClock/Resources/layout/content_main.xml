@@ -1,63 +1,115 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:showIn="@layout/activity_main">
-    <LinearLayout
-        android:orientation="vertical"
+    tools:showIn="@layout/activity_main"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <Button
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <Button
+        android:layout_height="wrap_content"
+        android:text="@string/simulate"
+        android:id="@+id/buttonSimulate" />
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/connect"
+        android:id="@+id/buttonConnect" />
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/disconnect"
+        android:id="@+id/buttonDisconnect"
+        android:visibility="gone" />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/rawStatus"
+        android:text="@string/raw_status" />
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/layoutComparison"
+        android:padding="5dp">
+        <TableRow
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/simulate"
-            android:id="@+id/buttonSimulate" />
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/connect"
-            android:id="@+id/buttonConnect" />
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/disconnect"
-            android:id="@+id/buttonDisconnect"
-            android:visibility="gone" />
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/rawStatus"
-            android:text="@string/raw_status" />
-        <TableLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/layoutComparison"
-            android:padding="5dp">
-            <TableRow
+            android:layout_height="wrap_content">
+            <TextView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/textViewPhoneTime"
-                    android:layout_column="0"
-                    android:layout_weight="1" />
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/textViewClockTime"
-                    android:layout_column="1"
-                    android:layout_weight="1" />
-            </TableRow>
-        </TableLayout>
-        <ListView
-            android:id="@+id/listViewAvailableDevices"
+                android:layout_height="wrap_content"
+                android:id="@+id/textViewPhoneUnixTime"
+                android:layout_column="0"
+                android:layout_weight="1" />
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/imageViewUnixTimeDifference"
+                android:src="@drawable/abc_btn_check_material_anim"
+                android:contentDescription="@string/unixtime_difference"
+                android:layout_column="1"
+                android:layout_weight="1" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/textViewClockUnixTime"
+                android:layout_column="2"
+                android:layout_weight="1" />
+        </TableRow>
+        <TableRow
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:visibility="gone">
-        </ListView>
-    </LinearLayout>
-</RelativeLayout>
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/textViewPhoneDate"
+                android:layout_column="0"
+                android:layout_weight="1" />
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/imageViewDateDifference"
+                android:src="@drawable/abc_btn_check_material_anim"
+                android:contentDescription="@string/date_difference"
+                android:layout_column="1"
+                android:layout_weight="1" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/textViewClockDate"
+                android:layout_column="2"
+                android:layout_weight="1" />
+        </TableRow>
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/textViewPhoneTime"
+                android:layout_column="0"
+                android:layout_weight="1" />
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/imageViewTimeDifference"
+                android:src="@drawable/abc_btn_check_material_anim"
+                android:contentDescription="@string/time_difference"
+                android:layout_column="1"
+                android:layout_weight="1" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/textViewClockTime"
+                android:layout_weight="1" />
+        </TableRow>
+    </TableLayout>
+    <ListView
+        android:id="@+id/listViewAvailableDevices"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone">
+    </ListView>
+</LinearLayout>
