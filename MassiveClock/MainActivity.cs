@@ -15,6 +15,7 @@ using Java.Util;
 using System.Text;
 using System.Linq;
 using System.Threading;
+using Newtonsoft.Json;
 
 namespace MassiveClock
 {
@@ -66,8 +67,8 @@ namespace MassiveClock
         {
             var adapter = BluetoothAdapter.DefaultAdapter;
             _device = (from bd in adapter.BondedDevices
-                          where bd.Name == "MassiveClock"
-                          select bd).FirstOrDefault();
+                       where bd.Name == "MassiveClock"
+                       select bd).FirstOrDefault();
 
             if (_device == null)
             {
@@ -113,11 +114,34 @@ namespace MassiveClock
             return unixDateTime;
         }
 
-        private void ProcessStatus(string status)
+        private void ProcessStatus(string rawStatus)
         {
-            _textViewRawStatus.Text = status;
+            _textViewRawStatus.Text = rawStatus;
 
-            _textViewPhoneTime.Text = ConvertToUnixTime(DateTime.Now).ToString();
+            var status = JsonConvert.DeserializeObject<Status>(rawStatus);
+            var clockUnixTime = status.Time;
+            _textViewClockTime.Text = clockUnixTime.ToString();
+
+            var phoneUnixTime = ConvertToUnixTime(DateTime.Now);
+            _textViewPhoneTime.Text = phoneUnixTime.ToString();
+
+            if (ApproximatelyEqual(phoneUnixTime, clockUnixTime))
+            {
+
+            }
+        }
+
+        private bool ApproximatelyEqual(long a, long b)
+        {
+            if (a > b + 15)
+            {
+                return false;
+            }
+            if (a < b - 15)
+            {
+                return false;
+            }
+            return true;
         }
 
         private void ButtonConnect_Click(object sender, EventArgs e)
@@ -160,7 +184,7 @@ namespace MassiveClock
 
         private void FabOnClick(object sender, EventArgs eventArgs)
         {
-            var view = (View) sender;
+            var view = (View)sender;
             Snackbar.Make(view, "Replace with your own action", Snackbar.LengthLong)
                 .SetAction("Action", (View.IOnClickListener)null).Show();
         }
@@ -171,5 +195,5 @@ namespace MassiveClock
 
             base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
         }
-	}
+    }
 }
