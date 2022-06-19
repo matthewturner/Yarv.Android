@@ -55,22 +55,22 @@ namespace MassiveClock
             SetSupportActionBar(toolbar);
 
             _fabCheckStatus = FindViewById<FloatingActionButton>(Resource.Id.fabCheckStatus);
-            _fabCheckStatus.Visibility = ViewStates.Gone;
+            _fabCheckStatus.Hide();
             _fabCheckStatus.Click += FabCheckStatus_OnClick;
 
             _buttonConnect = FindViewById<aw.Button>(Resource.Id.buttonConnect);
             _buttonConnect.Click += ButtonConnect_Click;
 
             _buttonDisconnect = FindViewById<aw.Button>(Resource.Id.buttonDisconnect);
-            _buttonDisconnect.Visibility = ViewStates.Gone;
+            _buttonDisconnect.Hide();
             _buttonDisconnect.Click += ButtonDisconnect_Click;
 
             _buttonSimulate = FindViewById<aw.Button>(Resource.Id.buttonSimulate);
-            _buttonSimulate.Visibility = ViewStates.Gone;
+            _buttonSimulate.Hide();
             _buttonSimulate.Click += ButtonSimulate_Click;
 
             _buttonSynchronize = FindViewById<aw.Button>(Resource.Id.buttonSynchronize);
-            _buttonSynchronize.Visibility = ViewStates.Gone;
+            _buttonSynchronize.Hide();
             _buttonSynchronize.Click += ButtonSynchronize_Click;
 
             _textViewRawStatus = FindViewById<aw.TextView>(Resource.Id.rawStatus);
@@ -103,25 +103,25 @@ namespace MassiveClock
             {
                 _textViewRawStatus.Text = "Named device not found";
                 InitializeDebugOptions(true);
-                _buttonConnect.Visibility = ViewStates.Gone;
-                _listViewAvailableDevices.Visibility = ViewStates.Visible;
+                _buttonConnect.Hide();
+                _listViewAvailableDevices.Show();
                 var list = adapter.BondedDevices.Select(x => x.Name).ToList();
                 _listViewAvailableDevices.Adapter = new aw.ArrayAdapter<string>(this, Android.Resource.Layout.SimpleListItem1, list);
             }
             else
             {
-                _buttonConnect.Visibility = ViewStates.Visible;
-                _listViewAvailableDevices.Visibility = ViewStates.Gone;
+                _buttonConnect.Show();
+                _listViewAvailableDevices.Hide();
             }
         }
 
         private void ButtonDisconnect_Click(object sender, EventArgs e)
         {
             _socket.Close();
-            _buttonConnect.Visibility = ViewStates.Visible;
-            _buttonDisconnect.Visibility = ViewStates.Gone;
-            _buttonSynchronize.Visibility = ViewStates.Gone;
-            _fabCheckStatus.Visibility = ViewStates.Gone;
+            _buttonConnect.Show();
+            _buttonDisconnect.Hide();
+            _buttonSynchronize.Hide();
+            _fabCheckStatus.Hide();
         }
 
         private void ButtonSynchronize_Click(object sender, EventArgs e)
@@ -136,11 +136,14 @@ namespace MassiveClock
         private void ButtonSimulate_Click(object sender, EventArgs e)
         {
             long unixDateTime = ConvertToUnixTime(DateTime.Now);
-            var status = @$"
+            var status = new StringBuilder(@$"
 {{
     ""time"": {unixDateTime}
 }}
-";
+{{
+    ""time"": {unixDateTime}
+}}
+");
             ProcessStatus(status);
         }
 
@@ -156,11 +159,16 @@ namespace MassiveClock
             return dateTimeOffset.LocalDateTime;
         }
 
-        private void ProcessStatus(string rawStatus)
+        private void ProcessStatus(StringBuilder rawStatus)
         {
-            _textViewRawStatus.Text = rawStatus;
+            _textViewRawStatus.Text = rawStatus.ToString();
 
-            var status = JsonConvert.DeserializeObject<Status>(rawStatus);
+            if (!rawStatus.ExtractJson())
+            {
+                return;
+            }
+
+            var status = JsonConvert.DeserializeObject<Status>(rawStatus.ToString());
             var clockUnixTime = status.Time;
             _textViewClockUnixTime.Text = clockUnixTime.ToString();
 
@@ -216,10 +224,10 @@ namespace MassiveClock
             {
                 _socket.Connect();
 
-                _buttonConnect.Visibility = ViewStates.Gone;
-                _buttonDisconnect.Visibility = ViewStates.Visible;
-                _buttonSynchronize.Visibility = ViewStates.Visible;
-                _fabCheckStatus.Visibility = ViewStates.Visible;
+                _buttonConnect.Hide();
+                _buttonDisconnect.Show();
+                _buttonSynchronize.Show();
+                _fabCheckStatus.Show();
 
                 CheckStatus();
             }
@@ -263,10 +271,7 @@ namespace MassiveClock
                 attempts++;
             }
 
-            if (status.ExtractJson())
-            {
-                ProcessStatus(status.ToString());
-            }
+            ProcessStatus(status);
         }
 
         public override bool OnCreateOptionsMenu(IMenu menu)
@@ -301,13 +306,13 @@ namespace MassiveClock
             _debugOptionsEnabled = debugOptionsEnabled;
             if (_debugOptionsEnabled)
             {
-                _textViewRawStatus.Visibility = ViewStates.Visible;
-                _buttonSimulate.Visibility = ViewStates.Visible;
+                _textViewRawStatus.Show();
+                _buttonSimulate.Show();
             }
             else
             {
-                _textViewRawStatus.Visibility = ViewStates.Gone;
-                _buttonSimulate.Visibility = ViewStates.Gone;
+                _textViewRawStatus.Hide();
+                _buttonSimulate.Hide();
             }
         }
 

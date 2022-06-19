@@ -1,13 +1,4 @@
-﻿using Android.App;
-using Android.Content;
-using Android.OS;
-using Android.Runtime;
-using Android.Views;
-using Android.Widget;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Text;
 
 namespace MassiveClock
 {
@@ -28,8 +19,8 @@ namespace MassiveClock
                 return false;
             }
 
+            status.Remove(end + 1, status.Length - end - 1);
             status.Remove(0, start);
-            status.Remove(end, status.Length - end);
 
             return true;
         }
