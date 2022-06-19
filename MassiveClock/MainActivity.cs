@@ -212,14 +212,25 @@ namespace MassiveClock
         private void ButtonConnect_Click(object sender, EventArgs e)
         {
             _socket = _device.CreateRfcommSocketToServiceRecord(UUID.FromString("00001101-0000-1000-8000-00805f9b34fb"));
-            _socket.Connect();
+            try
+            {
+                _socket.Connect();
 
-            _buttonConnect.Visibility = ViewStates.Gone;
-            _buttonDisconnect.Visibility = ViewStates.Visible;
-            _buttonSynchronize.Visibility = ViewStates.Visible;
-            _fabCheckStatus.Visibility = ViewStates.Visible;
+                _buttonConnect.Visibility = ViewStates.Gone;
+                _buttonDisconnect.Visibility = ViewStates.Visible;
+                _buttonSynchronize.Visibility = ViewStates.Visible;
+                _fabCheckStatus.Visibility = ViewStates.Visible;
 
-            CheckStatus();
+                CheckStatus();
+            }
+            catch(Exception ex)
+            {
+                _textViewRawStatus.Text = ex.Message;
+
+                var view = (View)sender;
+                Snackbar.Make(view, "Unable to connect. Are you in range?", Snackbar.LengthLong)
+                    .SetAction("Action", (View.IOnClickListener)null).Show();
+            }
         }
 
         private void CheckStatus()
@@ -228,32 +239,33 @@ namespace MassiveClock
             _socket.OutputStream.Write(buffer, 0, buffer.Length);
 
             Thread.Sleep(200);
-            var statusBuffer = new byte[1024];
+
             var attempts = 0;
-            var length = 0;
+            var status = new StringBuilder();
             while (attempts < 10)
             {
                 Thread.Sleep(100);
                 try
                 {
-                    length = _socket.InputStream.Read(statusBuffer, length, statusBuffer.Length);
+                    var statusBuffer = new byte[20];
+                    var length = _socket.InputStream.Read(statusBuffer, 0, statusBuffer.Length);
+                    status.Append(Encoding.UTF8.GetString(statusBuffer, 0, length));
+
+                    if (status.ExtractJson())
+                    {
+                        break;
+                    }
                 }
                 catch (Exception)
                 {
-                    break;
-                }
-                var s = Encoding.UTF8.GetString(statusBuffer, 0, length);
-                if (s.TrimEnd().EndsWith("}"))
-                {
-                    attempts = 10;
+                    // retry
                 }
                 attempts++;
             }
 
-            var status = Encoding.UTF8.GetString(statusBuffer, 0, length).Trim();
-            if (status.StartsWith("{") && status.EndsWith("}"))
+            if (status.ExtractJson())
             {
-                ProcessStatus(status);
+                ProcessStatus(status.ToString());
             }
         }
 
