@@ -4,7 +4,13 @@ namespace MassiveClock
 {
     public static class StringBuilderExtensions
     {
-        public static bool ExtractJson(this StringBuilder status)
+        /// <summary>
+        /// Filters out the last json payload within the string
+        /// and returns true if found
+        /// </summary>
+        /// <param name="status"></param>
+        /// <returns></returns>
+        public static bool FilterJson(this StringBuilder status)
         {
             var start = status.LastIndexOf('{');
             var end = status.LastIndexOf('}');

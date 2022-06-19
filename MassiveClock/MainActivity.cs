@@ -163,7 +163,7 @@ namespace MassiveClock
         {
             _textViewRawStatus.Text = rawStatus.ToString();
 
-            if (!rawStatus.ExtractJson())
+            if (!rawStatus.FilterJson())
             {
                 return;
             }
@@ -259,7 +259,7 @@ namespace MassiveClock
                     var length = _socket.InputStream.Read(statusBuffer, 0, statusBuffer.Length);
                     status.Append(Encoding.UTF8.GetString(statusBuffer, 0, length));
 
-                    if (status.ExtractJson())
+                    if (status.FilterJson())
                     {
                         break;
                     }
