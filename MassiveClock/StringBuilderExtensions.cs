@@ -1,9 +1,17 @@
-﻿using System.Text;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
 namespace MassiveClock
 {
     public static class StringBuilderExtensions
     {
+        private class Nest
+        {
+            public int Start { get; set; }
+            public int End { get; set; }
+        }
+
         /// <summary>
         /// Filters out the last json payload within the string
         /// and returns true if found
@@ -12,35 +20,48 @@ namespace MassiveClock
         /// <returns></returns>
         public static bool FilterJson(this StringBuilder status)
         {
-            var start = status.LastIndexOf('{');
-            var end = status.LastIndexOf('}');
+            var nest = status.LastNest();
 
-            if (start == -1 || end == -1)
+            if (nest == null)
             {
                 return false;
             }
 
-            if (start > end)
-            {
-                return false;
-            }
-
-            status.Remove(end + 1, status.Length - end - 1);
-            status.Remove(0, start);
+            status.Remove(nest.End + 1, status.Length - nest.End - 1);
+            status.Remove(0, nest.Start);
 
             return true;
         }
 
-        public static int LastIndexOf(this StringBuilder builder, char ch)
+        private static Nest LastNest(this StringBuilder builder)
         {
+            var stack = new Stack<Nest>();
+
             for (var i = builder.Length - 1; i >= 0; i--)
             {
-                if (builder[i] == ch)
+                if (builder[i] == '}')
                 {
-                    return i;
+                    stack.Push(new Nest { End = i });
+                    continue;
+                }
+                if (builder[i] == '{')
+                {
+                    if (stack.TryPop(out Nest result))
+                    {
+                        result.Start = i;
+                        if (!stack.Any())
+                        {
+                            return result;
+                        }
+                    }
+                    else
+                    {
+                        // dodgy input, carry on searching
+                    }
                 }
             }
-            return -1;
+
+            return null;
         }
     }
 }

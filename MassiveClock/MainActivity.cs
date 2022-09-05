@@ -138,10 +138,20 @@ namespace MassiveClock
             long unixDateTime = ConvertToUnixTime(DateTime.Now);
             var status = new StringBuilder(@$"
 {{
-    ""time"": {unixDateTime}
+    ""time"": {unixDateTime},
+    ""schedules"": {{
+        ""display"": [false,false,false,false,false,false,false,false,
+                        true,true,true, true, true, true, true, true,
+                        false,false,false,false,false,false,false,false]
+    }}
 }}
 {{
-    ""time"": {unixDateTime}
+    ""time"": {unixDateTime},
+    ""schedules"": {{
+        ""display"": [true,false,false,false,false,false,false,false,
+                        true,true,true, true, true, true, true, true,
+                        false,false,false,false,false,false,false,false]
+    }}
 }}
 ");
             ProcessStatus(status);

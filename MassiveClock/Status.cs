@@ -16,5 +16,8 @@ namespace MassiveClock
     {
         [JsonProperty("time")]
         public long Time { get; set; }
+
+        [JsonProperty("schedules")]
+        public Dictionary<string, List<bool>> Schedules { get; set; }
     }
 }
