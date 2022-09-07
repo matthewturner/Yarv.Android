@@ -10,4 +10,5 @@
     <string name="unixtime_difference">Indicates whether there is a difference between the unix times</string>
     <string name="time_difference">Indicates whether there is a difference between the times</string>
     <string name="date_difference">Indicates whether there is a difference between the dates</string>
+    <string name="set_schedule">Set</string>
 </resources>

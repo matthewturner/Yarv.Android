@@ -32,6 +32,9 @@ namespace MassiveClock
         private aw.TextView _textViewClockTime;
         private aw.TextView _textViewClockUnixTime;
         private aw.ListView _listViewAvailableDevices;
+        private aw.EditText _editTextSchedule;
+        private aw.LinearLayout _linearLayoutSetSchedule;
+        private aw.Button _buttonSetSchedule;
         private aw.Button _buttonConnect;
         private BluetoothSocket _socket;
         private BluetoothDevice _device;
@@ -88,6 +91,12 @@ namespace MassiveClock
 
             _listViewAvailableDevices = FindViewById<aw.ListView>(Resource.Id.listViewAvailableDevices);
 
+            _editTextSchedule = FindViewById<aw.EditText>(Resource.Id.editTextSchedule);
+            _linearLayoutSetSchedule = FindViewById<aw.LinearLayout>(Resource.Id.linearLayoutSetSchedule);
+            _linearLayoutSetSchedule.Hide();
+            _buttonSetSchedule = FindViewById<aw.Button>(Resource.Id.buttonSetSchedule);
+            _buttonSetSchedule.Click += ButtonSetSchedule_Click;
+
             InitializeDebugOptions(false);
             InitializeDevice();
         }
@@ -122,12 +131,25 @@ namespace MassiveClock
             _buttonDisconnect.Hide();
             _buttonSynchronize.Hide();
             _fabCheckStatus.Hide();
+            _linearLayoutSetSchedule.Hide();
         }
 
         private void ButtonSynchronize_Click(object sender, EventArgs e)
         {
             var unixTime = ConvertToUnixTime(DateTime.Now);
             var buffer = Encoding.UTF8.GetBytes($">set:{unixTime}!");
+            _socket.OutputStream.Write(buffer, 0, buffer.Length);
+
+            CheckStatus();
+        }
+
+        private void ButtonSetSchedule_Click(object sender, EventArgs e)
+        {
+            if(_editTextSchedule.Text.Length != 4)
+            {
+                return;
+            }
+            var buffer = Encoding.UTF8.GetBytes($">set-schedule:{_editTextSchedule.Text}!");
             _socket.OutputStream.Write(buffer, 0, buffer.Length);
 
             CheckStatus();
@@ -237,6 +259,7 @@ namespace MassiveClock
                 _buttonConnect.Hide();
                 _buttonDisconnect.Show();
                 _buttonSynchronize.Show();
+                _linearLayoutSetSchedule.Show();
                 _fabCheckStatus.Show();
 
                 CheckStatus();
