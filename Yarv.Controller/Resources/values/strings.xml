@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Yarv Controller</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_debug">Debug</string>
+    <string name="connect">Connect</string>
+    <string name="disconnect">Disconnect</string>
+    <string name="raw_status">Raw status</string>
+</resources>

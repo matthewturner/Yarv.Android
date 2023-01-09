@@ -1,7 +1,7 @@
 ﻿using Android.Views;
 using System.Text;
 
-namespace MassiveClock
+namespace Yarv.Controller
 {
     public static class ViewExtensions
     {
