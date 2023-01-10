@@ -1,6 +1,3 @@
-# MassiveClock - Android
+# Yarv Controller
 
-Android application for controlling the Massive Clock, supporting:
-
-* Synchronizing the time
-* Setting the display schedule
+Android application for controlling the [Yarv](https://github.com/matthewturner/Yarv).
