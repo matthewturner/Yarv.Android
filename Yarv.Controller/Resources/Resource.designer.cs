@@ -3813,7 +3813,7 @@ namespace Yarv.Controller
 			public const int line3 = 2131230852;
 			
 			// aapt resource value: 0x7F080085
-			public const int linearLayoutControl = 2131230853;
+			public const int linearLayoutTouchpad = 2131230853;
 			
 			// aapt resource value: 0x7F080086
 			public const int listMode = 2131230854;
@@ -4061,14 +4061,14 @@ namespace Yarv.Controller
 			// aapt resource value: 0x7F0800D4
 			public const int text2 = 2131230932;
 			
-			// aapt resource value: 0x7F0800D9
-			public const int textinput_counter = 2131230937;
-			
 			// aapt resource value: 0x7F0800DA
-			public const int textinput_error = 2131230938;
+			public const int textinput_counter = 2131230938;
 			
 			// aapt resource value: 0x7F0800DB
-			public const int textinput_helper_text = 2131230939;
+			public const int textinput_error = 2131230939;
+			
+			// aapt resource value: 0x7F0800DC
+			public const int textinput_helper_text = 2131230940;
 			
 			// aapt resource value: 0x7F0800D5
 			public const int textSpacerNoButtons = 2131230933;
@@ -4080,79 +4080,82 @@ namespace Yarv.Controller
 			public const int textStart = 2131230935;
 			
 			// aapt resource value: 0x7F0800D8
-			public const int text_input_password_toggle = 2131230936;
+			public const int textViewDebug = 2131230936;
 			
-			// aapt resource value: 0x7F0800DC
-			public const int time = 2131230940;
+			// aapt resource value: 0x7F0800D9
+			public const int text_input_password_toggle = 2131230937;
 			
 			// aapt resource value: 0x7F0800DD
-			public const int title = 2131230941;
+			public const int time = 2131230941;
 			
 			// aapt resource value: 0x7F0800DE
-			public const int titleDividerNoCustom = 2131230942;
+			public const int title = 2131230942;
 			
 			// aapt resource value: 0x7F0800DF
-			public const int title_template = 2131230943;
+			public const int titleDividerNoCustom = 2131230943;
 			
 			// aapt resource value: 0x7F0800E0
-			public const int toolbar = 2131230944;
+			public const int title_template = 2131230944;
 			
 			// aapt resource value: 0x7F0800E1
-			public const int top = 2131230945;
+			public const int toolbar = 2131230945;
 			
 			// aapt resource value: 0x7F0800E2
-			public const int topPanel = 2131230946;
+			public const int top = 2131230946;
 			
 			// aapt resource value: 0x7F0800E3
-			public const int touch_outside = 2131230947;
+			public const int topPanel = 2131230947;
 			
 			// aapt resource value: 0x7F0800E4
-			public const int transition_current_scene = 2131230948;
+			public const int touch_outside = 2131230948;
 			
 			// aapt resource value: 0x7F0800E5
-			public const int transition_layout_save = 2131230949;
+			public const int transition_current_scene = 2131230949;
 			
 			// aapt resource value: 0x7F0800E6
-			public const int transition_position = 2131230950;
+			public const int transition_layout_save = 2131230950;
 			
 			// aapt resource value: 0x7F0800E7
-			public const int transition_scene_layoutid_cache = 2131230951;
+			public const int transition_position = 2131230951;
 			
 			// aapt resource value: 0x7F0800E8
-			public const int transition_transform = 2131230952;
+			public const int transition_scene_layoutid_cache = 2131230952;
 			
 			// aapt resource value: 0x7F0800E9
-			public const int @unchecked = 2131230953;
+			public const int transition_transform = 2131230953;
 			
 			// aapt resource value: 0x7F0800EA
-			public const int uniform = 2131230954;
+			public const int @unchecked = 2131230954;
 			
 			// aapt resource value: 0x7F0800EB
-			public const int unlabeled = 2131230955;
+			public const int uniform = 2131230955;
 			
 			// aapt resource value: 0x7F0800EC
-			public const int up = 2131230956;
+			public const int unlabeled = 2131230956;
 			
 			// aapt resource value: 0x7F0800ED
-			public const int useLogo = 2131230957;
+			public const int up = 2131230957;
 			
 			// aapt resource value: 0x7F0800EE
-			public const int view_offset_helper = 2131230958;
+			public const int useLogo = 2131230958;
 			
 			// aapt resource value: 0x7F0800EF
-			public const int view_tree_saved_state_registry_owner = 2131230959;
+			public const int view_offset_helper = 2131230959;
 			
 			// aapt resource value: 0x7F0800F0
-			public const int visible = 2131230960;
+			public const int view_tree_saved_state_registry_owner = 2131230960;
 			
 			// aapt resource value: 0x7F0800F1
-			public const int visible_removing_fragment_view_tag = 2131230961;
+			public const int visible = 2131230961;
 			
 			// aapt resource value: 0x7F0800F2
-			public const int withText = 2131230962;
+			public const int visible_removing_fragment_view_tag = 2131230962;
 			
 			// aapt resource value: 0x7F0800F3
-			public const int wrap_content = 2131230963;
+			public const int withText = 2131230963;
+			
+			// aapt resource value: 0x7F0800F4
+			public const int wrap_content = 2131230964;
 			
 			static Id()
 			{
@@ -4608,52 +4611,55 @@ namespace Yarv.Controller
 			public const int copy_toast_msg = 2131623971;
 			
 			// aapt resource value: 0x7F0E0024
-			public const int disconnect = 2131623972;
+			public const int debug = 2131623972;
 			
 			// aapt resource value: 0x7F0E0025
-			public const int fab_transformation_scrim_behavior = 2131623973;
+			public const int disconnect = 2131623973;
 			
 			// aapt resource value: 0x7F0E0026
-			public const int fab_transformation_sheet_behavior = 2131623974;
+			public const int fab_transformation_scrim_behavior = 2131623974;
 			
 			// aapt resource value: 0x7F0E0027
-			public const int fallback_menu_item_copy_link = 2131623975;
+			public const int fab_transformation_sheet_behavior = 2131623975;
 			
 			// aapt resource value: 0x7F0E0028
-			public const int fallback_menu_item_open_in_browser = 2131623976;
+			public const int fallback_menu_item_copy_link = 2131623976;
 			
 			// aapt resource value: 0x7F0E0029
-			public const int fallback_menu_item_share_link = 2131623977;
+			public const int fallback_menu_item_open_in_browser = 2131623977;
 			
 			// aapt resource value: 0x7F0E002A
-			public const int hide_bottom_view_on_scroll_behavior = 2131623978;
+			public const int fallback_menu_item_share_link = 2131623978;
 			
 			// aapt resource value: 0x7F0E002B
-			public const int mtrl_chip_close_icon_content_description = 2131623979;
+			public const int hide_bottom_view_on_scroll_behavior = 2131623979;
 			
 			// aapt resource value: 0x7F0E002C
-			public const int password_toggle_content_description = 2131623980;
+			public const int mtrl_chip_close_icon_content_description = 2131623980;
 			
 			// aapt resource value: 0x7F0E002D
-			public const int path_password_eye = 2131623981;
+			public const int password_toggle_content_description = 2131623981;
 			
 			// aapt resource value: 0x7F0E002E
-			public const int path_password_eye_mask_strike_through = 2131623982;
+			public const int path_password_eye = 2131623982;
 			
 			// aapt resource value: 0x7F0E002F
-			public const int path_password_eye_mask_visible = 2131623983;
+			public const int path_password_eye_mask_strike_through = 2131623983;
 			
 			// aapt resource value: 0x7F0E0030
-			public const int path_password_strike_through = 2131623984;
+			public const int path_password_eye_mask_visible = 2131623984;
 			
 			// aapt resource value: 0x7F0E0031
-			public const int raw_status = 2131623985;
+			public const int path_password_strike_through = 2131623985;
 			
 			// aapt resource value: 0x7F0E0032
-			public const int search_menu_title = 2131623986;
+			public const int raw_status = 2131623986;
 			
 			// aapt resource value: 0x7F0E0033
-			public const int status_bar_notification_info_overflow = 2131623987;
+			public const int search_menu_title = 2131623987;
+			
+			// aapt resource value: 0x7F0E0034
+			public const int status_bar_notification_info_overflow = 2131623988;
 			
 			static String()
 			{

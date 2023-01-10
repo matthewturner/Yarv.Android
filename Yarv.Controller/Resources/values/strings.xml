@@ -5,4 +5,5 @@
     <string name="connect">Connect</string>
     <string name="disconnect">Disconnect</string>
     <string name="raw_status">Raw status</string>
+    <string name="debug">Debug</string>
 </resources>

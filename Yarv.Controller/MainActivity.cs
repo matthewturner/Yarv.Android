@@ -27,8 +27,9 @@ namespace Yarv.Controller
     {
         private aw.Button _buttonDisconnect;
         private aw.ListView _listViewAvailableDevices;
-        private aw.LinearLayout _linearLayoutControl;
+        private aw.LinearLayout _linearLayoutTouchpad;
         private aw.Button _buttonConnect;
+        private aw.TextView _textViewDebug;
         private BluetoothSocket _socket;
         private BluetoothDevice _device;
         private bool _debugOptionsEnabled;
@@ -43,6 +44,9 @@ namespace Yarv.Controller
             var toolbar = FindViewById<Toolbar>(Resource.Id.toolbar);
             SetSupportActionBar(toolbar);
 
+            _textViewDebug = FindViewById<aw.TextView>(Resource.Id.textViewDebug);
+            _textViewDebug.Hide();
+
             _fabCheckStatus = FindViewById<FloatingActionButton>(Resource.Id.fabCheckStatus);
             _fabCheckStatus.Hide();
             _fabCheckStatus.Click += FabCheckStatus_OnClick;
@@ -56,9 +60,9 @@ namespace Yarv.Controller
 
             _listViewAvailableDevices = FindViewById<aw.ListView>(Resource.Id.listViewAvailableDevices);
 
-            _linearLayoutControl = FindViewById<aw.LinearLayout>(Resource.Id.linearLayoutControl);
-            _linearLayoutControl.Touch += _linearLayoutControl_Touch;
-            _linearLayoutControl.Hide();
+            _linearLayoutTouchpad = FindViewById<aw.LinearLayout>(Resource.Id.linearLayoutTouchpad);
+            _linearLayoutTouchpad.Touch += _linearLayoutControl_Touch;
+            // _linearLayoutTouchpad.Hide();
 
             InitializeDebugOptions(false);
             InitializeDevice();
@@ -87,8 +91,13 @@ namespace Yarv.Controller
 
         private void SendCommand(string command)
         {
-            var buffer = Encoding.UTF8.GetBytes($">{command}!");
-            _socket.OutputStream.Write(buffer, 0, buffer.Length);
+            var encodedCommand = $">{command}!";
+            _textViewDebug.Text = encodedCommand;
+            if (_socket != null)
+            {
+                var buffer = Encoding.UTF8.GetBytes(encodedCommand);
+                _socket.OutputStream.Write(buffer, 0, buffer.Length);
+            }
         }
 
         private string CommandFor(MotionEvent ev)
@@ -107,10 +116,10 @@ namespace Yarv.Controller
             if (_device == null)
             {
                 InitializeDebugOptions(true);
-                _buttonConnect.Hide();
-                _listViewAvailableDevices.Show();
-                var list = adapter.BondedDevices.Select(x => x.Name).ToList();
-                _listViewAvailableDevices.Adapter = new aw.ArrayAdapter<string>(this, Android.Resource.Layout.SimpleListItem1, list);
+                // _buttonConnect.Hide();
+                // _listViewAvailableDevices.Show();
+                // var list = adapter.BondedDevices.Select(x => x.Name).ToList();
+                // _listViewAvailableDevices.Adapter = new aw.ArrayAdapter<string>(this, Android.Resource.Layout.SimpleListItem1, list);
             }
             else
             {
@@ -125,7 +134,7 @@ namespace Yarv.Controller
             _buttonConnect.Show();
             _buttonDisconnect.Hide();
             _fabCheckStatus.Hide();
-            _linearLayoutControl.Hide();
+            _linearLayoutTouchpad.Hide();
         }
 
         private void ButtonConnect_Click(object sender, EventArgs e)
@@ -137,7 +146,7 @@ namespace Yarv.Controller
 
                 _buttonConnect.Hide();
                 _buttonDisconnect.Show();
-                _linearLayoutControl.Show();
+                _linearLayoutTouchpad.Show();
                 _fabCheckStatus.Show();
             }
             catch(Exception)
@@ -178,6 +187,15 @@ namespace Yarv.Controller
         private void InitializeDebugOptions(bool debugOptionsEnabled)
         {
             _debugOptionsEnabled = debugOptionsEnabled;
+
+            if(_debugOptionsEnabled )
+            {
+                _textViewDebug.Show();
+            }
+            else
+            {
+                _textViewDebug.Hide();
+            }
         }
 
         private void FabCheckStatus_OnClick(object sender, EventArgs eventArgs)

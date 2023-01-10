@@ -24,11 +24,16 @@
         android:visibility="gone"
         android:paddingVertical="20dp"
         android:layout_margin="5dp"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/textViewDebug"
+        android:text="@string/debug" />
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="fill_parent"
         android:orientation="horizontal"
-        android:id="@+id/linearLayoutControl">
+        android:id="@+id/linearLayoutTouchpad">
     </LinearLayout>
     <ListView
         android:id="@+id/listViewAvailableDevices"
