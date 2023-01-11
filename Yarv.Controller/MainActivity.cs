@@ -25,6 +25,10 @@ namespace Yarv.Controller
         MainLauncher = true)]
     public class MainActivity : AppCompatActivity
     {
+        private const int SpeedCount = 5;
+        private const int SectionCount = 3;
+        private const int SegmentCount = SpeedCount * SectionCount;
+
         private aw.Button _buttonDisconnect;
         private aw.ListView _listViewAvailableDevices;
         private aw.LinearLayout _linearLayoutTouchpad;
@@ -73,10 +77,10 @@ namespace Yarv.Controller
             switch (e.Event.Action)
             {
                 case MotionEventActions.Down:
-                    var command = CommandFor(e.Event);
-                    SendCommand(command);
+                    SendCommandsFor(e.Event);
                     break;
                 case MotionEventActions.Move:
+                    SendCommandsFor(e.Event);
                     break;
                 case MotionEventActions.Up:
                     SendCommand("stop");
@@ -89,21 +93,128 @@ namespace Yarv.Controller
             SendCommand($"{command}:{data}");
         }
 
-        private void SendCommand(string command)
+        private void SendCommand(string command, int data, string followupCommand)
         {
-            var encodedCommand = $">{command}!";
-            _textViewDebug.Text = encodedCommand;
+            SendCommand($"{command}:{data}", followupCommand);
+        }
+
+        private void SendCommand(params string[] commands)
+        {
+            var encodedCommand = new StringBuilder();
+            foreach(var command in commands)
+            {
+                encodedCommand.Append($">{command}!");
+            }
+          
+            _textViewDebug.Text = encodedCommand.ToString();
             if (_socket != null)
             {
-                var buffer = Encoding.UTF8.GetBytes(encodedCommand);
+                var buffer = Encoding.UTF8.GetBytes(encodedCommand.ToString());
                 _socket.OutputStream.Write(buffer, 0, buffer.Length);
             }
         }
 
-        private string CommandFor(MotionEvent ev)
+        private Point ApproxCoordinateFor(MotionEvent ev)
         {
-            var point = new Point((int)ev.GetX(), (int)ev.GetY());
-            return "forward";
+            var x = ev.GetX();
+            var y = ev.GetY();
+
+            var xCoord = (int)Map(x, 0, _linearLayoutTouchpad.Width, 0, SegmentCount, 1);
+            var yCoord = (int)Map(y, 0, _linearLayoutTouchpad.Height, 0, SegmentCount, 1);
+
+            return new Point(xCoord, yCoord);
+        }
+
+        private void SendCommandsFor(MotionEvent ev)
+        {
+            var point = ApproxCoordinateFor(ev);
+
+            if (point.X >= 5 && point.X <= 10)
+            {
+                if (point.Y >= 5 && point.Y <= 10)
+                {
+                    SendCommand("stop");
+                    return;
+                }
+            }
+
+            var speed = CoordinateToSpeed(point.Y);
+
+            if (point.X <= 5)
+            {
+                if (speed == 0)
+                {
+                    SendCommand("left");
+                    return;
+                }
+                if (speed > 0)
+                {
+                    SendCommand("bear-left-forward");
+                    return;
+                }
+
+                SendCommand("bear-left-reverse");
+                return;
+            }
+
+            if (point.X > 5 && point.X <= 10)
+            {    
+                if (speed > 0)
+                {
+                    SendCommand("set-speed", speed, "forward");
+                    return;
+                }
+
+                SendCommand("set-speed", Math.Abs(speed), "reverse");
+                return;
+            }
+
+            if (point.X <= 15)
+            {
+                if (speed == 0)
+                {
+                    SendCommand("right");
+                    return;
+                }
+                
+                if (speed > 0)
+                {
+                    SendCommand("bear-right-forward");
+                    return;
+                }
+               
+                SendCommand("bear-right-reverse");
+                return;
+            }
+        }
+
+        private static int CoordinateToSpeed(int y)
+        {
+            if (y < 5)
+            {
+                return 5 - y;
+            }
+            if (y < 10)
+            {
+                return 0;
+            }    
+            if (y <= 15)
+            {
+                return -(y - 10);
+            }
+            return 0;
+        }
+
+        private static double Map(float sourceNumber, float fromA, float fromB, float toA, float toB, int decimalPrecision)
+        {
+            float deltaA = fromB - fromA;
+            float deltaB = toB - toA;
+            float scale = deltaB / deltaA;
+            float negA = -1 * fromA;
+            float offset = (negA * scale) + toA;
+            float finalNumber = (sourceNumber * scale) + offset;
+            int calcScale = (int)Math.Pow(10, decimalPrecision);
+            return (float)Math.Round(finalNumber * calcScale) / calcScale;
         }
 
         private void InitializeDevice()
