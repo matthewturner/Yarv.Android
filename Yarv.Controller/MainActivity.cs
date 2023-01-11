@@ -65,14 +65,14 @@ namespace Yarv.Controller
             _listViewAvailableDevices = FindViewById<aw.ListView>(Resource.Id.listViewAvailableDevices);
 
             _linearLayoutTouchpad = FindViewById<aw.LinearLayout>(Resource.Id.linearLayoutTouchpad);
-            _linearLayoutTouchpad.Touch += _linearLayoutControl_Touch;
+            _linearLayoutTouchpad.Touch += _linearLayoutTouchpad_Touch;
             // _linearLayoutTouchpad.Hide();
 
             InitializeDebugOptions(false);
             InitializeDevice();
         }
 
-        private void _linearLayoutControl_Touch(object sender, View.TouchEventArgs e)
+        private void _linearLayoutTouchpad_Touch(object sender, View.TouchEventArgs e)
         {
             switch (e.Event.Action)
             {
@@ -140,24 +140,24 @@ namespace Yarv.Controller
 
             var speed = CoordinateToSpeed(point.Y);
 
-            if (point.X <= 5)
+            if (point.X < 5)
             {
-                if (speed == 0)
-                {
-                    SendCommand("left");
-                    return;
-                }
                 if (speed > 0)
                 {
                     SendCommand("bear-left-forward");
                     return;
                 }
+                if (speed < 0)
+                {
+                    SendCommand("bear-left-reverse");
+                    return;
+                }
 
-                SendCommand("bear-left-reverse");
+                SendCommand("left");
                 return;
             }
 
-            if (point.X > 5 && point.X <= 10)
+            if (point.X > 5 && point.X < 10)
             {    
                 if (speed > 0)
                 {
@@ -169,21 +169,20 @@ namespace Yarv.Controller
                 return;
             }
 
-            if (point.X <= 15)
+            if (point.X < 15)
             {
-                if (speed == 0)
-                {
-                    SendCommand("right");
-                    return;
-                }
-                
                 if (speed > 0)
                 {
                     SendCommand("bear-right-forward");
                     return;
                 }
-               
-                SendCommand("bear-right-reverse");
+                if (speed < 0)
+                {
+                    SendCommand("bear-right-reverse");
+                    return;
+                }
+
+                SendCommand("right");
                 return;
             }
         }
