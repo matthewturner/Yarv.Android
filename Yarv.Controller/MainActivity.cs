@@ -128,10 +128,18 @@ namespace Yarv.Controller
         private void SendCommandsFor(MotionEvent ev)
         {
             var point = ApproxCoordinateFor(ev);
-
-            if (point.X >= 5 && point.X <= 10)
+            if (point.Y < 0)
             {
-                if (point.Y >= 5 && point.Y <= 10)
+                return;
+            }
+            if (point.Y > 15)
+            {
+                return;
+            }
+
+            if (point.X >= 5 && point.X < 10)
+            {
+                if (point.Y >= 5 && point.Y < 10)
                 {
                     SendCommand("stop");
                     return;
@@ -157,7 +165,7 @@ namespace Yarv.Controller
                 return;
             }
 
-            if (point.X > 5 && point.X < 10)
+            if (point.X >= 5 && point.X < 10)
             {    
                 if (speed > 0)
                 {
