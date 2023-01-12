@@ -37,6 +37,7 @@ namespace Yarv.Controller
         private BluetoothSocket _socket;
         private BluetoothDevice _device;
         private bool _debugOptionsEnabled;
+        private bool _simulationEnabled;
         private FloatingActionButton _fabCheckStatus;
 
         protected override void OnCreate(Bundle savedInstanceState)
@@ -66,7 +67,7 @@ namespace Yarv.Controller
 
             _linearLayoutTouchpad = FindViewById<aw.LinearLayout>(Resource.Id.linearLayoutTouchpad);
             _linearLayoutTouchpad.Touch += _linearLayoutTouchpad_Touch;
-            // _linearLayoutTouchpad.Hide();
+            _linearLayoutTouchpad.Hide();
 
             InitializeDebugOptions(false);
             InitializeDevice();
@@ -234,10 +235,10 @@ namespace Yarv.Controller
             if (_device == null)
             {
                 InitializeDebugOptions(true);
-                // _buttonConnect.Hide();
-                // _listViewAvailableDevices.Show();
-                // var list = adapter.BondedDevices.Select(x => x.Name).ToList();
-                // _listViewAvailableDevices.Adapter = new aw.ArrayAdapter<string>(this, Android.Resource.Layout.SimpleListItem1, list);
+                _buttonConnect.Hide();
+                _listViewAvailableDevices.Show();
+                var list = adapter.BondedDevices.Select(x => x.Name).ToList();
+                _listViewAvailableDevices.Adapter = new aw.ArrayAdapter<string>(this, Android.Resource.Layout.SimpleListItem1, list);
             }
             else
             {
@@ -285,6 +286,10 @@ namespace Yarv.Controller
         {
             var debugMenuItem = menu.FindItem(Resource.Id.action_debug);
             debugMenuItem.SetChecked(_debugOptionsEnabled);
+
+            var simulateMenuItem = menu.FindItem(Resource.Id.action_simulate);
+            simulateMenuItem.SetChecked(_simulationEnabled);
+
             return base.OnPrepareOptionsMenu(menu);
         }
 
@@ -294,12 +299,41 @@ namespace Yarv.Controller
             {
                 case Resource.Id.action_settings:
                     return true;
+                case Resource.Id.action_increase_edge_duration:
+                    SendCommand("increase-edge-duration");
+                    return true;
+                case Resource.Id.action_decrease_edge_duration:
+                    SendCommand("decrease-edge-duration");
+                    return true;
                 case Resource.Id.action_debug:
                     InitializeDebugOptions(!_debugOptionsEnabled);
+                    return true;
+                case Resource.Id.action_simulate:
+                    InitializeSimulateOptions(!_simulationEnabled);
                     return true;
             }
 
             return base.OnOptionsItemSelected(item);
+        }
+
+        private void InitializeSimulateOptions(bool simulateEnabled)
+        {
+            _simulationEnabled = simulateEnabled;
+
+            if (_simulationEnabled)
+            {
+                _linearLayoutTouchpad.Show();
+                _buttonConnect.Hide();
+                _buttonDisconnect.Hide();
+                _listViewAvailableDevices.Hide();
+            }
+            else
+            {
+                _linearLayoutTouchpad.Hide();
+                _buttonConnect.Hide();
+                _buttonDisconnect.Hide();
+                _listViewAvailableDevices.Show();
+            }
         }
 
         private void InitializeDebugOptions(bool debugOptionsEnabled)

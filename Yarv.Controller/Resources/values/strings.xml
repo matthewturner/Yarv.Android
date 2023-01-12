@@ -6,4 +6,7 @@
     <string name="disconnect">Disconnect</string>
     <string name="raw_status">Raw status</string>
     <string name="debug">Debug</string>
+    <string name="action_simulate">Simulate</string>
+    <string name="action_increase_edge_duration">Increase edge duration</string>
+    <string name="action_decrease_edge_duration">Decreate edge duration</string>
 </resources>

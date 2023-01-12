@@ -1,7 +1,17 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
-    <item
+  <item
+      android:id="@+id/action_increase_edge_duration"
+      android:orderInCategory="90"
+      android:title="@string/action_increase_edge_duration"
+      app:showAsAction="never" />
+  <item
+        android:id="@+id/action_decrease_edge_duration"
+        android:orderInCategory="95"
+        android:title="@string/action_decrease_edge_duration"
+        app:showAsAction="never" />
+  <item
         android:id="@+id/action_settings"
         android:orderInCategory="100"
         android:title="@string/action_settings"
@@ -10,6 +20,13 @@
         android:id="@+id/action_debug"
         android:orderInCategory="110"
         android:title="@string/action_debug"
+        android:checkable="true"
+        android:checked="false"
+        app:showAsAction="never" />
+  <item
+        android:id="@+id/action_simulate"
+        android:orderInCategory="120"
+        android:title="@string/action_simulate"
         android:checkable="true"
         android:checked="false"
         app:showAsAction="never" />
