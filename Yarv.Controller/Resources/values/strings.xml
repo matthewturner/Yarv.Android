@@ -8,6 +8,14 @@
     <string name="raw_status">Raw status</string>
     <string name="debug">Debug</string>
     <string name="action_simulate">Simulate</string>
-    <string name="action_increase_edge_duration">Increase edge duration</string>
-    <string name="action_decrease_edge_duration">Decreate edge duration</string>
+    <string name="action_connect">Connect</string>
+    <string name="action_control">Control</string>
+    <string name="action_touchpad">Touchpad</string>
+    <string name="bear_left">Bear Left</string>
+    <string name="forward">Forward</string>
+    <string name="bear_right">Bear Right</string>
+    <string name="left">Left</string>
+    <string name="stop">Stop</string>
+    <string name="right">Right</string>
+    <string name="reverse">Reverse</string>
 </resources>

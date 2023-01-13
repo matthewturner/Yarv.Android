@@ -19,7 +19,10 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <include layout="@layout/content_main" />
+    <include layout="@layout/content_connect"
+        android:id="@+id/contentConnect" />
+    <include layout="@layout/content_main"
+        android:id="@+id/contentMain" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabCheckStatus"

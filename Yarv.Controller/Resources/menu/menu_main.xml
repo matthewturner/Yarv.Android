@@ -2,31 +2,34 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
   <item
-      android:id="@+id/action_increase_edge_duration"
-      android:orderInCategory="90"
-      android:title="@string/action_increase_edge_duration"
-      app:showAsAction="never" />
-  <item
-        android:id="@+id/action_decrease_edge_duration"
-        android:orderInCategory="95"
-        android:title="@string/action_decrease_edge_duration"
-        app:showAsAction="never" />
-  <item
         android:id="@+id/action_settings"
         android:orderInCategory="100"
         android:title="@string/action_settings"
         app:showAsAction="never" />
   <item
-        android:id="@+id/action_debug"
-        android:orderInCategory="110"
-        android:title="@string/action_debug"
-        android:checkable="true"
-        android:checked="false"
-        app:showAsAction="never" />
+       android:id="@+id/action_connect"
+       android:orderInCategory="105"
+       android:title="@string/action_connect"
+       app:showAsAction="never" />
+  <item
+     android:id="@+id/action_control"
+     android:orderInCategory="106"
+     android:title="@string/action_control"
+     app:showAsAction="never" />
+  <item
+     android:id="@+id/action_touchpad"
+     android:orderInCategory="107"
+     android:title="@string/action_touchpad"
+     app:showAsAction="never" />
   <item
         android:id="@+id/action_simulate"
         android:orderInCategory="120"
         android:title="@string/action_simulate"
+        app:showAsAction="never" />
+  <item
+        android:id="@+id/action_debug"
+        android:orderInCategory="110"
+        android:title="@string/action_debug"
         android:checkable="true"
         android:checked="false"
         app:showAsAction="never" />

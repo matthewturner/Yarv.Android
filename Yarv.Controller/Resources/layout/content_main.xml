@@ -9,28 +9,6 @@
     android:layout_width="match_parent"
     android:layout_height="fill_parent"
     android:padding="5dp">
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/connect_car"
-        android:id="@+id/buttonConnectCar"
-        android:paddingVertical="20dp"
-        android:layout_margin="5dp"/>
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/connect_boat"
-        android:id="@+id/buttonConnectBoat"
-        android:paddingVertical="20dp"
-        android:layout_margin="5dp"/>
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/disconnect"
-        android:id="@+id/buttonDisconnect"
-        android:visibility="gone"
-        android:paddingVertical="20dp"
-        android:layout_margin="5dp"/>
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -40,12 +18,85 @@
         android:layout_width="match_parent"
         android:layout_height="fill_parent"
         android:orientation="horizontal"
-        android:id="@+id/linearLayoutTouchpad">
-    </LinearLayout>
-    <ListView
-        android:id="@+id/listViewAvailableDevices"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:id="@+id/linearLayoutTouchpad"
         android:visibility="gone">
-    </ListView>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:orientation="vertical"
+        android:id="@+id/linearLayoutControl">
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+            <Button
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:text="@string/bear_left"
+                android:layout_weight="1"
+                android:tag="bear-left-forward"/>
+            <Button
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:text="@string/forward"
+                android:layout_weight="1"
+                android:tag="forward" />
+            <Button
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:text="@string/bear_right"
+                android:layout_weight="1"
+                android:tag="bear-right-forward" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent"
+            android:orientation="horizontal"
+            android:layout_weight="1">
+            <Button
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:text="@string/left"
+                android:layout_weight="1"
+                android:tag="left" />
+            <Button
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:text="@string/stop"
+                android:layout_weight="1"
+                android:tag="stop" />
+            <Button
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:text="@string/right"
+                android:layout_weight="1"
+                android:tag="right" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent"
+            android:orientation="horizontal"
+            android:layout_weight="1">
+            <Button
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:text="@string/bear_left"
+                android:layout_weight="1"
+                android:tag="bear-left-reverse" />
+            <Button
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:text="@string/reverse"
+                android:layout_weight="1"
+                android:tag="reverse" />
+            <Button
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:text="@string/bear_right"
+                android:layout_weight="1"
+                android:tag="bear-right-reverse" />
+        </LinearLayout>
+    </LinearLayout>
 </LinearLayout>

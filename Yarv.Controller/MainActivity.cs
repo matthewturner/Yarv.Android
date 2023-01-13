@@ -39,8 +39,10 @@ namespace Yarv.Controller
         private BluetoothDevice _deviceCar;
         private BluetoothDevice _deviceBoat;
         private bool _debugOptionsEnabled;
-        private bool _simulationEnabled;
         private FloatingActionButton _fabCheckStatus;
+        private View _contentConnect;
+        private View _contentMain;
+        private aw.LinearLayout _linearLayoutControl;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -51,8 +53,13 @@ namespace Yarv.Controller
             var toolbar = FindViewById<Toolbar>(Resource.Id.toolbar);
             SetSupportActionBar(toolbar);
 
+            _contentConnect = FindViewById<View>(Resource.Id.contentConnect);
+            _contentConnect.Show();
+
+            _contentMain = FindViewById<View>(Resource.Id.contentMain);
+            _contentMain.Hide();
+
             _textViewDebug = FindViewById<aw.TextView>(Resource.Id.textViewDebug);
-            _textViewDebug.Hide();
 
             _fabCheckStatus = FindViewById<FloatingActionButton>(Resource.Id.fabCheckStatus);
             _fabCheckStatus.Hide();
@@ -71,11 +78,38 @@ namespace Yarv.Controller
             _listViewAvailableDevices = FindViewById<aw.ListView>(Resource.Id.listViewAvailableDevices);
 
             _linearLayoutTouchpad = FindViewById<aw.LinearLayout>(Resource.Id.linearLayoutTouchpad);
+            _linearLayoutTouchpad.Show();
             _linearLayoutTouchpad.Touch += _linearLayoutTouchpad_Touch;
-            _linearLayoutTouchpad.Hide();
+
+            _linearLayoutControl = FindViewById<aw.LinearLayout>(Resource.Id.linearLayoutControl);
+            _linearLayoutControl.Hide();
+            for (var i = 0; i < _linearLayoutControl.ChildCount; i++)
+            {
+                var row = (aw.LinearLayout)_linearLayoutControl.GetChildAt(i);
+                for (var j = 0; j < row.ChildCount; j++)
+                {
+                    var button = (aw.Button)row.GetChildAt(j);
+                    button.Touch += ButtonControl_Touch;
+                }
+            }
 
             InitializeDebugOptions(false);
             InitializeDevice();
+        }
+
+        private void ButtonControl_Touch(object sender, View.TouchEventArgs e)
+        {
+            var view = (View)sender;
+            switch (e.Event.Action)
+            {
+                case MotionEventActions.Down:
+                    SendCommand(view.Tag.ToString());
+                    break;
+                case MotionEventActions.Up:
+                    SendCommand("stop");
+                    break;
+            }
+            
         }
 
         private void _linearLayoutTouchpad_Touch(object sender, View.TouchEventArgs e)
@@ -145,7 +179,7 @@ namespace Yarv.Controller
 
             if (point.X >= 5 && point.X < 10)
             {
-                if (point.Y >= 5 && point.Y < 10)
+                if (point.Y >= 5 && point.Y <= 10)
                 {
                     SendCommand("stop");
                     return;
@@ -268,7 +302,8 @@ namespace Yarv.Controller
             _socket.Close();
             InitializeDevice();
             _fabCheckStatus.Hide();
-            _linearLayoutTouchpad.Hide();
+            _contentMain.Hide();
+            _contentConnect.Show();
         }
 
         private void ButtonConnectCar_Click(object sender, EventArgs e)
@@ -292,7 +327,10 @@ namespace Yarv.Controller
                 _buttonConnectBoat.Hide();
                 _listViewAvailableDevices.Hide();
                 _buttonDisconnect.Show();
-                _linearLayoutTouchpad.Show();
+
+                _contentConnect.Hide();
+                _contentMain.Show();
+
                 _fabCheckStatus.Show();
             }
             catch (Exception)
@@ -314,8 +352,11 @@ namespace Yarv.Controller
             var debugMenuItem = menu.FindItem(Resource.Id.action_debug);
             debugMenuItem.SetChecked(_debugOptionsEnabled);
 
-            var simulateMenuItem = menu.FindItem(Resource.Id.action_simulate);
-            simulateMenuItem.SetChecked(_simulationEnabled);
+            var touchpadMenuItem = menu.FindItem(Resource.Id.action_touchpad);
+            touchpadMenuItem.SetVisible(_linearLayoutTouchpad.Visibility == ViewStates.Gone);
+
+            var controlMenuItem = menu.FindItem(Resource.Id.action_control);
+            controlMenuItem.SetVisible(_linearLayoutControl.Visibility == ViewStates.Gone);
 
             return base.OnPrepareOptionsMenu(menu);
         }
@@ -326,40 +367,48 @@ namespace Yarv.Controller
             {
                 case Resource.Id.action_settings:
                     return true;
-                case Resource.Id.action_increase_edge_duration:
-                    SendCommand("increase-edge-duration");
-                    return true;
-                case Resource.Id.action_decrease_edge_duration:
-                    SendCommand("decrease-edge-duration");
-                    return true;
                 case Resource.Id.action_debug:
                     InitializeDebugOptions(!_debugOptionsEnabled);
                     return true;
+                case Resource.Id.action_touchpad:
+                    ShowTouchpad();
+                    return true;
+                case Resource.Id.action_control:
+                    ShowControl();
+                    return true;
                 case Resource.Id.action_simulate:
-                    InitializeSimulateOptions(!_simulationEnabled);
+                    InitializeSimulation();
+                    return true;
+                case Resource.Id.action_connect:
+                    ShowConnection();
                     return true;
             }
 
             return base.OnOptionsItemSelected(item);
         }
 
-        private void InitializeSimulateOptions(bool simulateEnabled)
+        private void ShowControl()
         {
-            _simulationEnabled = simulateEnabled;
+            _linearLayoutTouchpad.Hide();
+            _linearLayoutControl.Show();
+        }
 
-            if (_simulationEnabled)
-            {
-                _linearLayoutTouchpad.Show();
-                _buttonConnectCar.Hide();
-                _buttonConnectBoat.Hide();
-                _buttonDisconnect.Hide();
-                _listViewAvailableDevices.Hide();
-            }
-            else
-            {
-                InitializeDevice();
-                _linearLayoutTouchpad.Hide();
-            }
+        private void ShowTouchpad()
+        {
+            _linearLayoutTouchpad.Show();
+            _linearLayoutControl.Hide();
+        }
+
+        private void ShowConnection()
+        {
+            _contentMain.Hide();
+            _contentConnect.Show();
+        }
+
+        private void InitializeSimulation()
+        {
+            _contentMain.Show();
+            _contentConnect.Hide();
         }
 
         private void InitializeDebugOptions(bool debugOptionsEnabled)
