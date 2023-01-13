@@ -32,10 +32,12 @@ namespace Yarv.Controller
         private aw.Button _buttonDisconnect;
         private aw.ListView _listViewAvailableDevices;
         private aw.LinearLayout _linearLayoutTouchpad;
-        private aw.Button _buttonConnect;
+        private aw.Button _buttonConnectCar;
+        private aw.Button _buttonConnectBoat;
         private aw.TextView _textViewDebug;
         private BluetoothSocket _socket;
-        private BluetoothDevice _device;
+        private BluetoothDevice _deviceCar;
+        private BluetoothDevice _deviceBoat;
         private bool _debugOptionsEnabled;
         private bool _simulationEnabled;
         private FloatingActionButton _fabCheckStatus;
@@ -56,8 +58,11 @@ namespace Yarv.Controller
             _fabCheckStatus.Hide();
             _fabCheckStatus.Click += FabCheckStatus_OnClick;
 
-            _buttonConnect = FindViewById<aw.Button>(Resource.Id.buttonConnect);
-            _buttonConnect.Click += ButtonConnect_Click;
+            _buttonConnectCar = FindViewById<aw.Button>(Resource.Id.buttonConnectCar);
+            _buttonConnectCar.Click += ButtonConnectCar_Click;
+
+            _buttonConnectBoat = FindViewById<aw.Button>(Resource.Id.buttonConnectBoat);
+            _buttonConnectBoat.Click += ButtonConnectBoat_Click;
 
             _buttonDisconnect = FindViewById<aw.Button>(Resource.Id.buttonDisconnect);
             _buttonDisconnect.Hide();
@@ -228,49 +233,71 @@ namespace Yarv.Controller
         private void InitializeDevice()
         {
             var adapter = BluetoothAdapter.DefaultAdapter;
-            _device = (from bd in adapter.BondedDevices
+            _deviceCar = (from bd in adapter.BondedDevices
                        where bd.Name == "YarvCar"
                        select bd).FirstOrDefault();
+            _deviceBoat = (from bd in adapter.BondedDevices
+                          where bd.Name == "YarvBoat"
+                          select bd).FirstOrDefault();
 
-            if (_device == null)
+            if (_deviceCar == null)
             {
-                InitializeDebugOptions(true);
-                _buttonConnect.Hide();
-                _listViewAvailableDevices.Show();
-                var list = adapter.BondedDevices.Select(x => x.Name).ToList();
-                _listViewAvailableDevices.Adapter = new aw.ArrayAdapter<string>(this, Android.Resource.Layout.SimpleListItem1, list);
+                _buttonConnectCar.Hide();
             }
             else
             {
-                _buttonConnect.Show();
-                _listViewAvailableDevices.Hide();
+                _buttonConnectCar.Show();
             }
+
+            if (_deviceBoat == null)
+            {
+                _buttonConnectBoat.Hide();
+            }
+            else
+            {
+                _buttonConnectBoat.Show();
+            }
+
+            _listViewAvailableDevices.Show();
+            var list = adapter.BondedDevices.Select(x => x.Name).ToList();
+            _listViewAvailableDevices.Adapter = new aw.ArrayAdapter<string>(this, Android.Resource.Layout.SimpleListItem1, list);
         }
 
         private void ButtonDisconnect_Click(object sender, EventArgs e)
         {
             _socket.Close();
-            _buttonConnect.Show();
-            _buttonDisconnect.Hide();
+            InitializeDevice();
             _fabCheckStatus.Hide();
             _linearLayoutTouchpad.Hide();
         }
 
-        private void ButtonConnect_Click(object sender, EventArgs e)
+        private void ButtonConnectCar_Click(object sender, EventArgs e)
         {
-            _socket = _device.CreateRfcommSocketToServiceRecord(UUID.FromString("00001101-0000-1000-8000-00805f9b34fb"));
+            Connect((View)sender, _deviceCar);
+        }
+
+        private void ButtonConnectBoat_Click(object sender, EventArgs e)
+        {
+            Connect((View)sender, _deviceBoat);
+        }
+
+        private void Connect(View sender, BluetoothDevice device)
+        {
+            _socket = device.CreateRfcommSocketToServiceRecord(UUID.FromString("00001101-0000-1000-8000-00805f9b34fb"));
             try
             {
                 _socket.Connect();
 
-                _buttonConnect.Hide();
+                _buttonConnectCar.Hide();
+                _buttonConnectBoat.Hide();
+                _listViewAvailableDevices.Hide();
                 _buttonDisconnect.Show();
                 _linearLayoutTouchpad.Show();
                 _fabCheckStatus.Show();
             }
-            catch(Exception)
+            catch (Exception)
             {
-                var view = (View)sender;
+                var view = sender;
                 Snackbar.Make(view, "Unable to connect. Are you in range?", Snackbar.LengthLong)
                     .SetAction("Action", (View.IOnClickListener)null).Show();
             }
@@ -323,16 +350,15 @@ namespace Yarv.Controller
             if (_simulationEnabled)
             {
                 _linearLayoutTouchpad.Show();
-                _buttonConnect.Hide();
+                _buttonConnectCar.Hide();
+                _buttonConnectBoat.Hide();
                 _buttonDisconnect.Hide();
                 _listViewAvailableDevices.Hide();
             }
             else
             {
+                InitializeDevice();
                 _linearLayoutTouchpad.Hide();
-                _buttonConnect.Hide();
-                _buttonDisconnect.Hide();
-                _listViewAvailableDevices.Show();
             }
         }
 

@@ -2,7 +2,8 @@
     <string name="app_name">Yarv Controller</string>
     <string name="action_settings">Settings</string>
     <string name="action_debug">Debug</string>
-    <string name="connect">Connect</string>
+    <string name="connect_car">Connect (Car)</string>
+    <string name="connect_boat">Connect (Boat)</string>
     <string name="disconnect">Disconnect</string>
     <string name="raw_status">Raw status</string>
     <string name="debug">Debug</string>

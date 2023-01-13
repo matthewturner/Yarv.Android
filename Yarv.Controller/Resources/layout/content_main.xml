@@ -12,8 +12,15 @@
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/connect"
-        android:id="@+id/buttonConnect"
+        android:text="@string/connect_car"
+        android:id="@+id/buttonConnectCar"
+        android:paddingVertical="20dp"
+        android:layout_margin="5dp"/>
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/connect_boat"
+        android:id="@+id/buttonConnectBoat"
         android:paddingVertical="20dp"
         android:layout_margin="5dp"/>
     <Button
