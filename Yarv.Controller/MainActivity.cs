@@ -18,12 +18,13 @@ using System.Threading;
 using Newtonsoft.Json;
 using aw = Android.Widget;
 using Android.Graphics;
+using Google.Android.Material.Slider;
 
 namespace Yarv.Controller
 {
     [Activity(Label = "@string/app_name", Theme = "@style/AppTheme.NoActionBar",
         MainLauncher = true)]
-    public class MainActivity : AppCompatActivity
+    public class MainActivity : AppCompatActivity, IBaseOnChangeListener
     {
         private const int SpeedCount = 5;
         private const int SectionCount = 3;
@@ -35,6 +36,7 @@ namespace Yarv.Controller
         private aw.Button _buttonConnectCar;
         private aw.Button _buttonConnectBoat;
         private aw.TextView _textViewDebug;
+        private aw.TextView _textViewNoBluetoothDevices;
         private BluetoothSocket _socket;
         private BluetoothDevice _deviceCar;
         private BluetoothDevice _deviceBoat;
@@ -42,6 +44,7 @@ namespace Yarv.Controller
         private FloatingActionButton _fabCheckStatus;
         private View _contentConnect;
         private View _contentMain;
+        private Slider _sliderSpeed;
         private aw.LinearLayout _linearLayoutControl;
 
         protected override void OnCreate(Bundle savedInstanceState)
@@ -60,6 +63,7 @@ namespace Yarv.Controller
             _contentMain.Hide();
 
             _textViewDebug = FindViewById<aw.TextView>(Resource.Id.textViewDebug);
+            _textViewNoBluetoothDevices = FindViewById<aw.TextView>(Resource.Id.textViewNoBluetoothDevices);
 
             _fabCheckStatus = FindViewById<FloatingActionButton>(Resource.Id.fabCheckStatus);
             _fabCheckStatus.Hide();
@@ -81,15 +85,27 @@ namespace Yarv.Controller
             _linearLayoutTouchpad.Show();
             _linearLayoutTouchpad.Touch += _linearLayoutTouchpad_Touch;
 
+            _sliderSpeed = FindViewById<Slider>(Resource.Id.sliderSpeed);
+            var method = Java.Lang.Class.ForName("com.google.android.material.slider.BaseSlider")
+                .GetDeclaredMethods()
+                .FirstOrDefault(x => x.Name == "addOnChangeListener");
+            method?.Invoke(_sliderSpeed, this);
+
             _linearLayoutControl = FindViewById<aw.LinearLayout>(Resource.Id.linearLayoutControl);
             _linearLayoutControl.Hide();
             for (var i = 0; i < _linearLayoutControl.ChildCount; i++)
             {
-                var row = (aw.LinearLayout)_linearLayoutControl.GetChildAt(i);
-                for (var j = 0; j < row.ChildCount; j++)
+                var row = _linearLayoutControl.GetChildAt(i) as aw.LinearLayout;
+                if (row != null)
                 {
-                    var button = (aw.Button)row.GetChildAt(j);
-                    button.Touch += ButtonControl_Touch;
+                    for (var j = 0; j < row.ChildCount; j++)
+                    {
+                        var button = row.GetChildAt(j) as aw.Button;
+                        if (button != null)
+                        {
+                            button.Touch += ButtonControl_Touch;
+                        }
+                    }
                 }
             }
 
@@ -97,6 +113,10 @@ namespace Yarv.Controller
             InitializeDevice();
         }
 
+        public void OnValueChange(Java.Lang.Object p0, float value, bool p2)
+        {
+            SendCommand("set-speed", (int)value);
+        }
         private void ButtonControl_Touch(object sender, View.TouchEventArgs e)
         {
             var view = (View)sender;
@@ -292,9 +312,18 @@ namespace Yarv.Controller
                 _buttonConnectBoat.Show();
             }
 
-            _listViewAvailableDevices.Show();
-            var list = adapter.BondedDevices.Select(x => x.Name).ToList();
-            _listViewAvailableDevices.Adapter = new aw.ArrayAdapter<string>(this, Android.Resource.Layout.SimpleListItem1, list);
+            if (adapter.BondedDevices.Any())
+            {
+                _textViewNoBluetoothDevices.Hide();
+                _listViewAvailableDevices.Show();
+                var list = adapter.BondedDevices.Select(x => x.Name).ToList();
+                _listViewAvailableDevices.Adapter = new aw.ArrayAdapter<string>(this, Android.Resource.Layout.SimpleListItem1, list);
+            }
+            else
+            {
+                _textViewNoBluetoothDevices.Show();
+                _listViewAvailableDevices.Hide();
+            }
         }
 
         private void ButtonDisconnect_Click(object sender, EventArgs e)
@@ -353,10 +382,23 @@ namespace Yarv.Controller
             debugMenuItem.SetChecked(_debugOptionsEnabled);
 
             var touchpadMenuItem = menu.FindItem(Resource.Id.action_touchpad);
-            touchpadMenuItem.SetVisible(_linearLayoutTouchpad.Visibility == ViewStates.Gone);
-
             var controlMenuItem = menu.FindItem(Resource.Id.action_control);
-            controlMenuItem.SetVisible(_linearLayoutControl.Visibility == ViewStates.Gone);
+
+            if (_contentMain.Visibility == ViewStates.Visible)
+            {
+                debugMenuItem.SetVisible(true);
+                touchpadMenuItem.SetVisible(_linearLayoutTouchpad.Visibility == ViewStates.Gone);
+                controlMenuItem.SetVisible(_linearLayoutControl.Visibility == ViewStates.Gone);
+            }
+            else
+            {
+                debugMenuItem.SetVisible(false);
+                touchpadMenuItem.SetVisible(false);
+                controlMenuItem.SetVisible(false);
+            }
+
+            var connectMenuItem = menu.FindItem(Resource.Id.action_connect);
+            connectMenuItem.SetVisible(_contentConnect.Visibility == ViewStates.Gone);
 
             return base.OnPrepareOptionsMenu(menu);
         }
@@ -407,6 +449,7 @@ namespace Yarv.Controller
 
         private void InitializeSimulation()
         {
+            InitializeDebugOptions(true);
             _contentMain.Show();
             _contentConnect.Hide();
         }

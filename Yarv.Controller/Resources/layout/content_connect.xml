@@ -31,6 +31,11 @@
         android:visibility="gone"
         android:paddingVertical="20dp"
         android:layout_margin="5dp"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/textViewNoBluetoothDevices"
+        android:text="@string/no_bluetooth_devices" />
     <ListView
         android:id="@+id/listViewAvailableDevices"
         android:layout_width="match_parent"

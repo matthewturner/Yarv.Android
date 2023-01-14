@@ -18,4 +18,6 @@
     <string name="stop">Stop</string>
     <string name="right">Right</string>
     <string name="reverse">Reverse</string>
+    <string name="speed">Speed</string>
+    <string name="no_bluetooth_devices">There are no bluetooth devices paired</string>
 </resources>
