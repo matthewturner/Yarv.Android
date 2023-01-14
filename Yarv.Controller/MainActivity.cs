@@ -26,9 +26,22 @@ namespace Yarv.Controller
         MainLauncher = true)]
     public class MainActivity : AppCompatActivity, IBaseOnChangeListener
     {
-        private const int SpeedCount = 5;
-        private const int SectionCount = 3;
-        private const int SegmentCount = SpeedCount * SectionCount;
+        private const int LeftBoundary = 30;
+        private const int RightBoundary = 70;
+        private const int Forward5Boundary = 15;
+        private const int Forward4Boundary = 20;
+        private const int Forward3Boundary = 25;
+        private const int Forward2Boundary = 30;
+        private const int Forward1Boundary = 35;
+        private const int ForwardStopBoundary = 35;
+
+        private const int ReverseStopBoundary = 65;
+        private const int Reverse1Boundary = 70;
+        private const int Reverse2Boundary = 75;
+        private const int Reverse3Boundary = 80;
+        private const int Reverse4Boundary = 85;
+        private const int Reverse5Boundary = 100;
+
 
         private aw.Button _buttonDisconnect;
         private aw.ListView _listViewAvailableDevices;
@@ -46,6 +59,7 @@ namespace Yarv.Controller
         private View _contentMain;
         private Slider _sliderSpeed;
         private aw.LinearLayout _linearLayoutControl;
+        private string _lastCommand;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -166,10 +180,19 @@ namespace Yarv.Controller
                 encodedCommand.Append($">{command}!");
             }
           
-            _textViewDebug.Text = encodedCommand.ToString();
+            var currentCommand = encodedCommand.ToString();
+
+            if (currentCommand == _lastCommand)
+            {
+                _textViewDebug.Text = currentCommand;
+                return;
+            }
+
+            _lastCommand = currentCommand;
+            _textViewDebug.Text = currentCommand + " (new)";
             if (_socket != null)
             {
-                var buffer = Encoding.UTF8.GetBytes(encodedCommand.ToString());
+                var buffer = Encoding.UTF8.GetBytes(currentCommand);
                 _socket.OutputStream.Write(buffer, 0, buffer.Length);
             }
         }
@@ -179,8 +202,8 @@ namespace Yarv.Controller
             var x = ev.GetX();
             var y = ev.GetY();
 
-            var xCoord = (int)Map(x, 0, _linearLayoutTouchpad.Width, 0, SegmentCount, 1);
-            var yCoord = (int)Map(y, 0, _linearLayoutTouchpad.Height, 0, SegmentCount, 1);
+            var xCoord = (int)Map(x, 0, _linearLayoutTouchpad.Width, 0, 100, 1);
+            var yCoord = (int)Map(y, 0, _linearLayoutTouchpad.Height, 0, 100, 1);
 
             return new Point(xCoord, yCoord);
         }
@@ -192,30 +215,19 @@ namespace Yarv.Controller
             {
                 return;
             }
-            if (point.Y > 15)
+            if (point.Y > 100)
             {
                 return;
             }
 
-            if (point.X >= 5 && point.X < 10)
+            if (point.X < LeftBoundary)
             {
-                if (point.Y >= 5 && point.Y <= 10)
-                {
-                    SendCommand("stop");
-                    return;
-                }
-            }
-
-            var speed = CoordinateToSpeed(point.Y);
-
-            if (point.X < 5)
-            {
-                if (speed > 0)
+                if (point.Y < ForwardStopBoundary)
                 {
                     SendCommand("bear-left-forward");
                     return;
                 }
-                if (speed < 0)
+                if (point.Y > ReverseStopBoundary)
                 {
                     SendCommand("bear-left-reverse");
                     return;
@@ -225,26 +237,14 @@ namespace Yarv.Controller
                 return;
             }
 
-            if (point.X >= 5 && point.X < 10)
-            {    
-                if (speed > 0)
-                {
-                    SendCommand("set-speed", speed, "forward");
-                    return;
-                }
-
-                SendCommand("set-speed", Math.Abs(speed), "reverse");
-                return;
-            }
-
-            if (point.X < 15)
+            if (point.X > RightBoundary)
             {
-                if (speed > 0)
+                if (point.Y < ForwardStopBoundary)
                 {
                     SendCommand("bear-right-forward");
                     return;
                 }
-                if (speed < 0)
+                if (point.Y > ReverseStopBoundary)
                 {
                     SendCommand("bear-right-reverse");
                     return;
@@ -253,23 +253,74 @@ namespace Yarv.Controller
                 SendCommand("right");
                 return;
             }
-        }
 
-        private static int CoordinateToSpeed(int y)
-        {
-            if (y < 5)
+            if (point.Y < Forward5Boundary)
             {
-                return 5 - y;
+                SendCommand("set-speed", 5, "forward");
+                return;
             }
-            if (y < 10)
+
+            if (point.Y < Forward4Boundary)
             {
-                return 0;
-            }    
-            if (y <= 15)
-            {
-                return -(y - 10);
+                SendCommand("set-speed", 4, "forward");
+                return;
             }
-            return 0;
+
+            if (point.Y < Forward3Boundary)
+            {
+                SendCommand("set-speed", 3, "forward");
+                return;
+            }
+
+            if (point.Y < Forward2Boundary)
+            {
+                SendCommand("set-speed", 2, "forward");
+                return;
+            }
+
+            if (point.Y < Forward1Boundary)
+            {
+                SendCommand("set-speed", 1, "forward");
+                return;
+            }
+
+            if (point.Y < ReverseStopBoundary)
+            {
+                SendCommand("stop");
+                return;
+            }
+
+            if (point.Y < Reverse1Boundary)
+            {
+                SendCommand("set-speed", 1, "reverse");
+                return;
+            }
+
+            if (point.Y < Reverse2Boundary)
+            {
+                SendCommand("set-speed", 2, "reverse");
+                return;
+            }
+
+            if (point.Y < Reverse3Boundary)
+            {
+                SendCommand("set-speed", 3, "reverse");
+                return;
+            }
+
+            if (point.Y < Reverse4Boundary)
+            {
+                SendCommand("set-speed", 4, "reverse");
+                return;
+            }
+
+            if (point.Y < Reverse5Boundary)
+            {
+                SendCommand("set-speed", 5, "reverse");
+                return;
+            }
+
+            return;
         }
 
         private static double Map(float sourceNumber, float fromA, float fromB, float toA, float toB, int decimalPrecision)
