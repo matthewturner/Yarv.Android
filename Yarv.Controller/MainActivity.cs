@@ -60,6 +60,7 @@ namespace Yarv.Controller
         private Slider _sliderSpeed;
         private aw.LinearLayout _linearLayoutControl;
         private string _lastCommand;
+        private bool _autoPilotEnabled;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -339,10 +340,10 @@ namespace Yarv.Controller
         {
             var adapter = BluetoothAdapter.DefaultAdapter;
             _deviceCar = (from bd in adapter.BondedDevices
-                       where bd.Name == "YarvCar"
+                       where bd.Name == "Yarv-Car"
                        select bd).FirstOrDefault();
             _deviceBoat = (from bd in adapter.BondedDevices
-                          where bd.Name == "YarvBoat"
+                          where bd.Name == "Yarv-Boat"
                           select bd).FirstOrDefault();
 
             if (_deviceCar == null)
@@ -432,18 +433,23 @@ namespace Yarv.Controller
             var debugMenuItem = menu.FindItem(Resource.Id.action_debug);
             debugMenuItem.SetChecked(_debugOptionsEnabled);
 
+            var autoPilotMenuItem = menu.FindItem(Resource.Id.action_auto_pilot);
+            autoPilotMenuItem.SetChecked(_autoPilotEnabled);
+
             var touchpadMenuItem = menu.FindItem(Resource.Id.action_touchpad);
             var controlMenuItem = menu.FindItem(Resource.Id.action_control);
 
             if (_contentMain.Visibility == ViewStates.Visible)
             {
                 debugMenuItem.SetVisible(true);
+                autoPilotMenuItem.SetVisible(true);
                 touchpadMenuItem.SetVisible(_linearLayoutTouchpad.Visibility == ViewStates.Gone);
                 controlMenuItem.SetVisible(_linearLayoutControl.Visibility == ViewStates.Gone);
             }
             else
             {
                 debugMenuItem.SetVisible(false);
+                autoPilotMenuItem.SetVisible(false);
                 touchpadMenuItem.SetVisible(false);
                 controlMenuItem.SetVisible(false);
             }
@@ -475,9 +481,26 @@ namespace Yarv.Controller
                 case Resource.Id.action_connect:
                     ShowConnection();
                     return true;
+                case Resource.Id.action_auto_pilot:
+                    SetAutoPilot(!_autoPilotEnabled);
+                    return true;
             }
 
             return base.OnOptionsItemSelected(item);
+        }
+
+        private void SetAutoPilot(bool autoPilotEnabled)
+        {
+            _autoPilotEnabled = autoPilotEnabled;
+
+            if (_autoPilotEnabled)
+            {
+                SendCommand("start-self-drive");
+            }
+            else
+            {
+                SendCommand("stop-self-drive");
+            }
         }
 
         private void ShowControl()

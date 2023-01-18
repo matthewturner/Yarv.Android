@@ -2,36 +2,43 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
   <item
-        android:id="@+id/action_settings"
-        android:orderInCategory="100"
-        android:title="@string/action_settings"
-        app:showAsAction="never"
-        android:visible="false" />
+		android:id="@+id/action_settings"
+		android:orderInCategory="100"
+		android:title="@string/action_settings"
+		app:showAsAction="never"
+    android:visible="false" />
   <item
-       android:id="@+id/action_connect"
-       android:orderInCategory="105"
-       android:title="@string/action_connect"
-       app:showAsAction="never" />
+    android:id="@+id/action_connect"
+    android:orderInCategory="105"
+    android:title="@string/action_connect"
+    app:showAsAction="never" />
   <item
-     android:id="@+id/action_control"
-     android:orderInCategory="106"
-     android:title="@string/action_control"
-     app:showAsAction="never" />
+		android:id="@+id/action_control"
+		android:orderInCategory="106"
+		android:title="@string/action_control"
+		app:showAsAction="never" />
   <item
-     android:id="@+id/action_touchpad"
-     android:orderInCategory="107"
-     android:title="@string/action_touchpad"
-     app:showAsAction="never" />
+		android:id="@+id/action_touchpad"
+		android:orderInCategory="107"
+		android:title="@string/action_touchpad"
+		app:showAsAction="never" />
   <item
-        android:id="@+id/action_simulate"
-        android:orderInCategory="120"
-        android:title="@string/action_simulate"
-        app:showAsAction="never" />
+		android:id="@+id/action_auto_pilot"
+		android:orderInCategory="120"
+		android:title="@string/action_auto_pilot"
+		android:checkable="true"
+		android:checked="false"
+		app:showAsAction="never" />
   <item
-        android:id="@+id/action_debug"
-        android:orderInCategory="110"
-        android:title="@string/action_debug"
-        android:checkable="true"
-        android:checked="false"
-        app:showAsAction="never" />
+		android:id="@+id/action_simulate"
+		android:orderInCategory="130"
+		android:title="@string/action_simulate"
+		app:showAsAction="never" />
+  <item
+		android:id="@+id/action_debug"
+		android:orderInCategory="140"
+		android:title="@string/action_debug"
+		android:checkable="true"
+		android:checked="false"
+		app:showAsAction="never" />
 </menu>
