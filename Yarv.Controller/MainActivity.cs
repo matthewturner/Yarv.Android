@@ -234,7 +234,7 @@ namespace Yarv.Controller
                     return;
                 }
 
-                SendCommand("left");
+                SendCommand("set-speed", 5, "left");
                 return;
             }
 
@@ -251,7 +251,7 @@ namespace Yarv.Controller
                     return;
                 }
 
-                SendCommand("right");
+                SendCommand("set-speed", 5, "right");
                 return;
             }
 
