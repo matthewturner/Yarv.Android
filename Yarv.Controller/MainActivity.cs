@@ -336,45 +336,68 @@ namespace Yarv.Controller
             return (float)Math.Round(finalNumber * calcScale) / calcScale;
         }
 
+        private bool IsConnected
+        {
+            get
+            {
+                if (_socket != null && _socket.IsConnected)
+                {
+                    return true;
+                }
+                return false;
+            }
+        }
+
         private void InitializeDevice()
         {
-            var adapter = BluetoothAdapter.DefaultAdapter;
-            _deviceCar = (from bd in adapter.BondedDevices
-                       where bd.Name == "Yarv-Car"
-                       select bd).FirstOrDefault();
-            _deviceBoat = (from bd in adapter.BondedDevices
-                          where bd.Name == "Yarv-Boat"
-                          select bd).FirstOrDefault();
-
-            if (_deviceCar == null)
+            if (IsConnected)
             {
                 _buttonConnectCar.Hide();
-            }
-            else
-            {
-                _buttonConnectCar.Show();
-            }
-
-            if (_deviceBoat == null)
-            {
                 _buttonConnectBoat.Hide();
-            }
-            else
-            {
-                _buttonConnectBoat.Show();
-            }
-
-            if (adapter.BondedDevices.Any())
-            {
-                _textViewNoBluetoothDevices.Hide();
-                _listViewAvailableDevices.Show();
-                var list = adapter.BondedDevices.Select(x => x.Name).ToList();
-                _listViewAvailableDevices.Adapter = new aw.ArrayAdapter<string>(this, Android.Resource.Layout.SimpleListItem1, list);
-            }
-            else
-            {
-                _textViewNoBluetoothDevices.Show();
                 _listViewAvailableDevices.Hide();
+                _textViewNoBluetoothDevices.Hide();
+                _buttonDisconnect.Show();
+            }
+            else
+            {
+                var adapter = BluetoothAdapter.DefaultAdapter;
+                _deviceCar = (from bd in adapter.BondedDevices
+                       where bd.Name == "Yarv-Car"
+                       select bd).FirstOrDefault();
+                _deviceBoat = (from bd in adapter.BondedDevices
+                          where bd.Name == "Yarv-Boat"
+                          select bd).FirstOrDefault();
+            
+                if (_deviceCar == null)
+                {
+                    _buttonConnectCar.Hide();
+                }
+                else
+                {
+                    _buttonConnectCar.Show();
+                }
+
+                if (_deviceBoat == null)
+                {
+                    _buttonConnectBoat.Hide();
+                }
+                else
+                {
+                    _buttonConnectBoat.Show();
+                }
+
+                if (adapter.BondedDevices.Any())
+                {
+                    _textViewNoBluetoothDevices.Hide();
+                    _listViewAvailableDevices.Show();
+                    var list = adapter.BondedDevices.Select(x => x.Name).ToList();
+                    _listViewAvailableDevices.Adapter = new aw.ArrayAdapter<string>(this, Android.Resource.Layout.SimpleListItem1, list);
+                }
+                else
+                {
+                    _textViewNoBluetoothDevices.Show();
+                    _listViewAvailableDevices.Hide();
+                }
             }
         }
 
