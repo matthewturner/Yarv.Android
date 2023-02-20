@@ -4,18 +4,13 @@ using Android.OS;
 using Android.Runtime;
 using Android.Views;
 using AndroidX.AppCompat.Widget;
-using AndroidX.AppCompat.Content;
 using AndroidX.AppCompat.App;
 using Google.Android.Material.FloatingActionButton;
 using Google.Android.Material.Snackbar;
-using Android.Content;
 using Android.Bluetooth;
-using System.Collections.Generic;
 using Java.Util;
 using System.Text;
 using System.Linq;
-using System.Threading;
-using Newtonsoft.Json;
 using aw = Android.Widget;
 using Android.Graphics;
 using Google.Android.Material.Slider;
@@ -41,7 +36,6 @@ namespace Yarv.Controller
         private const int Reverse3Boundary = 80;
         private const int Reverse4Boundary = 85;
         private const int Reverse5Boundary = 100;
-
 
         private aw.Button _buttonDisconnect;
         private aw.ListView _listViewAvailableDevices;
@@ -130,7 +124,7 @@ namespace Yarv.Controller
 
         public void OnValueChange(Java.Lang.Object p0, float value, bool p2)
         {
-            SendCommand("set-speed", (int)value);
+            SendCommand(Commands.SetSpeed, (int)value);
         }
         private void ButtonControl_Touch(object sender, View.TouchEventArgs e)
         {
@@ -141,7 +135,7 @@ namespace Yarv.Controller
                     SendCommand(view.Tag.ToString());
                     break;
                 case MotionEventActions.Up:
-                    SendCommand("stop");
+                    SendCommand(Commands.Stop);
                     break;
             }
             
@@ -158,7 +152,7 @@ namespace Yarv.Controller
                     SendCommandsFor(e.Event);
                     break;
                 case MotionEventActions.Up:
-                    SendCommand("stop");
+                    SendCommand(Commands.Stop);
                     break;
             }
         }
@@ -225,16 +219,16 @@ namespace Yarv.Controller
             {
                 if (point.Y < ForwardStopBoundary)
                 {
-                    SendCommand("bear-left-forward");
+                    SendCommand(Commands.BearLeftForward);
                     return;
                 }
                 if (point.Y > ReverseStopBoundary)
                 {
-                    SendCommand("bear-left-reverse");
+                    SendCommand(Commands.BearLeftReverse);
                     return;
                 }
 
-                SendCommand("set-speed", 5, "left");
+                SendCommand(Commands.SetSpeed, 5, Commands.Left);
                 return;
             }
 
@@ -242,82 +236,82 @@ namespace Yarv.Controller
             {
                 if (point.Y < ForwardStopBoundary)
                 {
-                    SendCommand("bear-right-forward");
+                    SendCommand(Commands.BearRightFoward);
                     return;
                 }
                 if (point.Y > ReverseStopBoundary)
                 {
-                    SendCommand("bear-right-reverse");
+                    SendCommand(Commands.BearRightReverse);
                     return;
                 }
 
-                SendCommand("set-speed", 5, "right");
+                SendCommand(Commands.SetSpeed, 5, Commands.Right);
                 return;
             }
 
             if (point.Y < Forward5Boundary)
             {
-                SendCommand("set-speed", 5, "forward");
+                SendCommand(Commands.SetSpeed, 5, Commands.Forward);
                 return;
             }
 
             if (point.Y < Forward4Boundary)
             {
-                SendCommand("set-speed", 4, "forward");
+                SendCommand(Commands.SetSpeed, 4, Commands.Forward);
                 return;
             }
 
             if (point.Y < Forward3Boundary)
             {
-                SendCommand("set-speed", 3, "forward");
+                SendCommand(Commands.SetSpeed, 3, Commands.Forward);
                 return;
             }
 
             if (point.Y < Forward2Boundary)
             {
-                SendCommand("set-speed", 2, "forward");
+                SendCommand(Commands.SetSpeed, 2, Commands.Forward);
                 return;
             }
 
             if (point.Y < Forward1Boundary)
             {
-                SendCommand("set-speed", 1, "forward");
+                SendCommand(Commands.SetSpeed, 1, Commands.Forward);
                 return;
             }
 
             if (point.Y < ReverseStopBoundary)
             {
-                SendCommand("stop");
+                SendCommand(Commands.Stop);
                 return;
             }
 
             if (point.Y < Reverse1Boundary)
             {
-                SendCommand("set-speed", 1, "reverse");
+                SendCommand(Commands.SetSpeed, 1, Commands.Reverse);
                 return;
             }
 
             if (point.Y < Reverse2Boundary)
             {
-                SendCommand("set-speed", 2, "reverse");
+                SendCommand(Commands.SetSpeed, 2, Commands.Reverse);
                 return;
             }
 
             if (point.Y < Reverse3Boundary)
             {
-                SendCommand("set-speed", 3, "reverse");
+                SendCommand(Commands.SetSpeed, 3, Commands.Reverse);
                 return;
             }
 
             if (point.Y < Reverse4Boundary)
             {
-                SendCommand("set-speed", 4, "reverse");
+                SendCommand(Commands.SetSpeed, 4, Commands.Reverse);
                 return;
             }
 
             if (point.Y < Reverse5Boundary)
             {
-                SendCommand("set-speed", 5, "reverse");
+                SendCommand(Commands.SetSpeed, 5, Commands.Reverse);
                 return;
             }
 
@@ -518,11 +512,11 @@ namespace Yarv.Controller
 
             if (_autoPilotEnabled)
             {
-                SendCommand("start-self-drive");
+                SendCommand(Commands.EnableAutoPilot);
             }
             else
             {
-                SendCommand("stop-self-drive");
+                SendCommand(Commands.DisableAutoPilot);
             }
         }
 
