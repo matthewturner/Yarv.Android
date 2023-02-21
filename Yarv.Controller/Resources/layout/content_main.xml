@@ -36,19 +36,19 @@
                 android:layout_height="fill_parent"
                 android:text="@string/bear_left"
                 android:layout_weight="1"
-                android:tag="bear-left-forward"/>
+                android:tag="blf"/>
             <Button
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
                 android:text="@string/forward"
                 android:layout_weight="1"
-                android:tag="forward" />
+                android:tag="fwd" />
             <Button
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
                 android:text="@string/bear_right"
                 android:layout_weight="1"
-                android:tag="bear-right-forward" />
+                android:tag="brf" />
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
@@ -60,19 +60,19 @@
                 android:layout_height="fill_parent"
                 android:text="@string/left"
                 android:layout_weight="1"
-                android:tag="left" />
+                android:tag="lft" />
             <Button
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
                 android:text="@string/stop"
                 android:layout_weight="1"
-                android:tag="stop" />
+                android:tag="stp" />
             <Button
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
                 android:text="@string/right"
                 android:layout_weight="1"
-                android:tag="right" />
+                android:tag="rht" />
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
@@ -84,19 +84,19 @@
                 android:layout_height="fill_parent"
                 android:text="@string/bear_left"
                 android:layout_weight="1"
-                android:tag="bear-left-reverse" />
+                android:tag="blr" />
             <Button
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
                 android:text="@string/reverse"
                 android:layout_weight="1"
-                android:tag="reverse" />
+                android:tag="rev" />
             <Button
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
                 android:text="@string/bear_right"
                 android:layout_weight="1"
-                android:tag="bear-right-reverse" />
+                android:tag="brr" />
         </LinearLayout>
         <LinearLayout
             android:layout_width="wrap_content"

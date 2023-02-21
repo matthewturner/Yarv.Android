@@ -92,7 +92,7 @@ namespace Yarv.Controller
 
             _linearLayoutTouchpad = FindViewById<aw.LinearLayout>(Resource.Id.linearLayoutTouchpad);
             _linearLayoutTouchpad.Show();
-            _linearLayoutTouchpad.Touch += _linearLayoutTouchpad_Touch;
+            _linearLayoutTouchpad.Touch += LinearLayoutTouchpad_Touch;
 
             _sliderSpeed = FindViewById<Slider>(Resource.Id.sliderSpeed);
             var method = Java.Lang.Class.ForName("com.google.android.material.slider.BaseSlider")
@@ -102,30 +102,34 @@ namespace Yarv.Controller
 
             _linearLayoutControl = FindViewById<aw.LinearLayout>(Resource.Id.linearLayoutControl);
             _linearLayoutControl.Hide();
+            AttachButtonHandlers();
+
+            InitializeDebugOptions(false);
+            InitializeDevice();
+        }
+
+        private void AttachButtonHandlers()
+        {
             for (var i = 0; i < _linearLayoutControl.ChildCount; i++)
             {
-                var row = _linearLayoutControl.GetChildAt(i) as aw.LinearLayout;
-                if (row != null)
+                if (_linearLayoutControl.GetChildAt(i) is aw.LinearLayout row)
                 {
                     for (var j = 0; j < row.ChildCount; j++)
                     {
-                        var button = row.GetChildAt(j) as aw.Button;
-                        if (button != null)
+                        if (row.GetChildAt(j) is aw.Button button)
                         {
                             button.Touch += ButtonControl_Touch;
                         }
                     }
                 }
             }
-
-            InitializeDebugOptions(false);
-            InitializeDevice();
         }
 
         public void OnValueChange(Java.Lang.Object p0, float value, bool p2)
         {
             SendCommand(Commands.SetSpeed, (int)value);
         }
+
         private void ButtonControl_Touch(object sender, View.TouchEventArgs e)
         {
             var view = (View)sender;
@@ -141,7 +145,7 @@ namespace Yarv.Controller
             
         }
 
-        private void _linearLayoutTouchpad_Touch(object sender, View.TouchEventArgs e)
+        private void LinearLayoutTouchpad_Touch(object sender, View.TouchEventArgs e)
         {
             switch (e.Event.Action)
             {
